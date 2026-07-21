@@ -1,0 +1,633 @@
+/* Reset and Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1a1a2e;
+    color: #fff;
+    overflow: hidden;
+}
+
+/* Game Container */
+#game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+/* Canvas */
+#game-canvas {
+    display: block;
+    background-color: #2d5a27;
+    image-rendering: pixelated;
+}
+
+/* Start Screen */
+#start-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    z-index: 100;
+}
+
+#start-screen h1 {
+    font-size: 3rem;
+    color: #4ade80;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 0.5rem;
+}
+
+#start-screen p {
+    font-size: 1.5rem;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+}
+
+#start-btn {
+    padding: 1rem 3rem;
+    font-size: 1.5rem;
+    background-color: #22c55e;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+}
+
+#start-btn:hover {
+    background-color: #16a34a;
+    transform: scale(1.05);
+}
+
+.controls-info {
+    background-color: rgba(0,0,0,0.3);
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.controls-info p {
+    font-size: 1rem;
+    margin: 0.3rem 0;
+}
+
+/* Game UI */
+#game-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#game-ui > * {
+    pointer-events: auto;
+}
+
+/* Status Bars */
+#status-bars {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: rgba(0,0,0,0.6);
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.status-bar .label {
+    width: 80px;
+    font-size: 0.9rem;
+}
+
+.bar-container {
+    width: 150px;
+    height: 20px;
+    background-color: #374151;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.bar.health { background-color: #ef4444; }
+.bar.hunger { background-color: #f97316; }
+.bar.thirst { background-color: #3b82f6; }
+
+.status-bar span:last-child {
+    width: 35px;
+    text-align: right;
+    font-weight: bold;
+}
+
+/* Time Display */
+#time-display {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: rgba(0,0,0,0.6);
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+#time-icon {
+    font-size: 2rem;
+}
+
+#day-counter, #night-counter {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Children Display */
+#children-display {
+    position: absolute;
+    top: 20px;
+    right: 200px;
+    background-color: rgba(0,0,0,0.6);
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+}
+
+#children-count {
+    color: #f472b6;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+/* Quick Inventory */
+#quick-inventory {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+}
+
+.inventory-slot {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(0,0,0,0.6);
+    border: 2px solid #4b5563;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.inventory-slot:hover {
+    border-color: #60a5fa;
+}
+
+.inventory-slot.selected {
+    border-color: #fbbf24;
+    background-color: rgba(251, 191, 36, 0.2);
+}
+
+/* Minimap */
+#minimap {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    border: 3px solid #4b5563;
+    border-radius: 8px;
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* Interaction Prompt */
+#interaction-prompt {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.8);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+/* Inventory Screen */
+#inventory-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.inventory-panel {
+    background-color: #1f2937;
+    padding: 30px;
+    border-radius: 15px;
+    display: flex;
+    gap: 30px;
+}
+
+.inventory-panel h2 {
+    margin-bottom: 20px;
+    color: #60a5fa;
+}
+
+#inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 60px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 8px;
+}
+
+#item-details {
+    width: 200px;
+    padding: 15px;
+    background-color: #111827;
+    border-radius: 10px;
+}
+
+#item-details h3 {
+    color: #9ca3af;
+    margin-bottom: 10px;
+}
+
+#item-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#item-description {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+#use-item-btn, #close-inventory-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#use-item-btn:hover, #close-inventory-btn:hover {
+    background-color: #2563eb;
+}
+
+/* Pause Menu */
+#pause-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 60;
+}
+
+.menu-panel {
+    background-color: #1f2937;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.menu-panel h2 {
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+.menu-panel button {
+    display: block;
+    width: 200px;
+    padding: 15px;
+    margin: 10px auto;
+    font-size: 1.1rem;
+    background-color: #374151;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.menu-panel button:hover {
+    background-color: #4b5563;
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Night Overlay */
+#night-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 50, 0.5);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+/* Touch Controls */
+#touch-controls {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+#touch-controls.game-started {
+    display: block;
+}
+
+/* Joystick */
+#joystick-container {
+    position: absolute;
+    bottom: 100px;
+    left: 40px;
+    width: 150px;
+    height: 150px;
+    pointer-events: auto;
+}
+
+#joystick {
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#joystick.active {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+#joystick-knob {
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s ease-out;
+}
+
+/* Action Buttons */
+#action-buttons {
+    position: absolute;
+    bottom: 80px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    pointer-events: auto;
+}
+
+.action-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.action-btn .btn-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.action-btn .btn-label {
+    font-size: 0.7rem;
+    margin-top: 4px;
+    opacity: 0.9;
+}
+
+/* Specific button colors */
+#btn-attack {
+    background: rgba(220, 38, 38, 0.5);
+    border-color: rgba(220, 38, 38, 0.7);
+}
+
+#btn-attack:active {
+    background: rgba(220, 38, 38, 0.8);
+}
+
+#btn-interact {
+    background: rgba(34, 197, 94, 0.5);
+    border-color: rgba(34, 197, 94, 0.7);
+}
+
+#btn-interact:active {
+    background: rgba(34, 197, 94, 0.8);
+}
+
+#btn-inventory {
+    background: rgba(59, 130, 246, 0.5);
+    border-color: rgba(59, 130, 246, 0.7);
+}
+
+#btn-inventory:active {
+    background: rgba(59, 130, 246, 0.8);
+}
+
+/* Auxiliary Buttons */
+#aux-buttons {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+.aux-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.aux-btn:active {
+    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Touch Indicator */
+#touch-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 20px;
+    color: #4ade80;
+    font-size: 0.9rem;
+    animation: pulse 2s infinite;
+    pointer-events: none;
+}
+
+/* Responsive adjustments for touch */
+@media (hover: none) and (pointer: coarse) {
+    /* Esconder instruções de teclado em dispositivos touch */
+    .controls-info {
+        display: none;
+    }
+    
+    /* Ajustar interface do jogo */
+    #game-ui {
+        pointer-events: auto;
+    }
+    
+    /* Ajustar tamanhos em telas pequenas */
+    @media (max-width: 600px) {
+        .action-btn {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .action-btn .btn-icon {
+            font-size: 1.5rem;
+        }
+        
+        #joystick-container {
+            bottom: 80px;
+            left: 20px;
+            width: 130px;
+            height: 130px;
+        }
+        
+        #joystick {
+            width: 100px;
+            height: 100px;
+        }
+        
+        #joystick-knob {
+            width: 40px;
+            height: 40px;
+        }
+        
+        #action-buttons {
+            bottom: 60px;
+            right: 15px;
+            gap: 10px;
+        }
+    }
+}
+
+/* Estilo para tela inicial em touch */
+#start-screen .controls-info::after {
+    content: ' ou use os controles touch na tela';
+    display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    #start-screen .controls-info::after {
+        display: inline;
+        color: #4ade80;
+        margin-top: 10px;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .status-bar {
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+    
+    #time-display {
+        transform: translateX(-50%) scale(0.8);
+    }
+    
+    .inventory-slot {
+        width: 50px;
+        height: 50px;
+    }
+    
+    #minimap {
+        width: 100px;
+        height: 100px;
+    }
+}
