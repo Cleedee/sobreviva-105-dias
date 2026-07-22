@@ -9,7 +9,7 @@ const TILE_TYPES = {
     GRASS_3: { id: 3, name: 'Grama', solid: false, color: TILE_COLORS.GRASS_3 },
     DIRT: { id: 10, name: 'Terra', solid: false, color: TILE_COLORS.DIRT },
     PATH: { id: 11, name: 'Caminho', solid: false, color: TILE_COLORS.PATH },
-    WATER: { id: 20, name: 'Água', solid: true, color: TILE_COLORS.WATER },
+    WATER: { id: 20, name: 'Água', solid: true, color: TILE_COLORS.WATER, interactable: true, type: 'water' },
     TREE: { id: 30, name: 'Árvore', solid: true, color: TILE_COLORS.TREE_TRUNK, interactable: true, type: 'tree' },
     ROCK: { id: 31, name: 'Pedra', solid: true, color: TILE_COLORS.ROCK, interactable: true, type: 'rock' },
     BERRY_BUSH: { id: 32, name: 'Arbusto', solid: false, color: '#228B22', interactable: true, type: 'berry_bush' },

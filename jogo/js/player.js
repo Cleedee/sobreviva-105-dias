@@ -246,13 +246,20 @@ class Player {
                 return { success: true, message: 'Coletou fibra!' };
                 
             case 'water':
-                // Encher cantil
-                if (this.inventory.hasItem('water_bottle')) {
-                    // Restaurar sede diretamente por agora
-                    this.thirst = Math.min(this.thirst + 25, this.maxThirst);
-                    return { success: true, message: 'Bebeu água!' };
+                // Beber água do lago e/ou encher cantil
+                const messages = [];
+                if (this.thirst < this.maxThirst) {
+                    const restored = Math.min(20, this.maxThirst - this.thirst);
+                    this.thirst += restored;
+                    messages.push('Bebeu água da lagoa!');
                 }
-                return { success: false, message: 'Precisa de um cantil!' };
+                if (this.inventory.hasItem('water_bottle')) {
+                    messages.push('Cantil cheio!');
+                }
+                if (messages.length > 0) {
+                    return { success: true, message: messages.join(' ') };
+                }
+                return { success: false, message: 'Sede já está cheia!' };
                 
             case 'prison':
                 // Tentar abrir cela

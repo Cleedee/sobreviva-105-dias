@@ -225,6 +225,7 @@ class Game {
     checkNearbyInteractions() {
         const playerCenter = this.player.getCenter();
         let canInteract = false;
+        let nearbyType = null;
         
         // Verificar tiles adjacentes
         const tileX = Math.floor(playerCenter.x / GAME_CONFIG.TILE_SIZE);
@@ -235,6 +236,7 @@ class Game {
                 const tile = this.world.getTile(tileX + dx, tileY + dy);
                 if (tile && tile.interactable) {
                     canInteract = true;
+                    if (!nearbyType) nearbyType = tile.type;
                 }
             }
         }
@@ -248,17 +250,52 @@ class Game {
                 );
                 if (dist < 50) {
                     canInteract = true;
+                    if (!nearbyType) nearbyType = 'child';
                 }
             }
         }
         
         if (canInteract) {
-            // Mostrar instrução baseada no dispositivo
-            if (touchControls && touchControls.isActive()) {
-                this.ui.showInteractionPrompt('Toque em <strong>Ação</strong> para interagir');
-            } else {
-                this.ui.showInteractionPrompt('Pressione <strong>E</strong> para interagir');
+            let prompt;
+            const isTouch = touchControls && touchControls.isActive();
+            const action = isTouch ? 'Toque em <strong>Ação</strong>' : 'Pressione <strong>E</strong>';
+            
+            switch (nearbyType) {
+                case 'water':
+                    prompt = `${action} para beber água`;
+                    break;
+                case 'tree':
+                    prompt = `${action} para cortar árvore`;
+                    break;
+                case 'rock':
+                    prompt = `${action} para minerar pedra`;
+                    break;
+                case 'berry_bush':
+                    prompt = `${action} para colher frutas`;
+                    break;
+                case 'tall_grass':
+                    prompt = `${action} para coletar fibra`;
+                    break;
+                case 'campfire':
+                    prompt = `${action} para usar fogueira`;
+                    break;
+                case 'workbench':
+                    prompt = `${action} para usar bancada`;
+                    break;
+                case 'cabin':
+                    prompt = `${action} para entrar na cabana`;
+                    break;
+                case 'prison':
+                    prompt = `${action} para interagir com cela`;
+                    break;
+                case 'child':
+                    prompt = `${action} para resgatar criança`;
+                    break;
+                default:
+                    prompt = `${action} para interagir`;
             }
+            
+            this.ui.showInteractionPrompt(prompt);
         } else {
             this.ui.hideInteractionPrompt();
         }

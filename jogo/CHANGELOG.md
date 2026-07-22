@@ -4,6 +4,49 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.7.0] - 2026-07-22
+
+### ✨ Novas Funcionalidades
+
+#### 💧 Interação com Lagoas
+
+##### Beber Água
+- Jogador pode interagir com tiles de **água** (lagoas) para beber
+- Restaura **20 de sede** por interação
+- Funciona sem cantil — basta encostar na água
+
+##### Prompt Contextual
+- Prompt de interação agora mostra ação específica do tile próximo:
+  - 💧 Água: "Pressione **E** para beber água"
+  - 🌳 Árvore: "Pressione **E** para cortar árvore"
+  - 🪨 Pedra: "Pressione **E** para minerar pedra"
+  - 🫐 Arbusto: "Pressione **E** para colher frutas"
+  - 🌿 Grama: "Pressione **E** para coletar fibra"
+  - 🔥 Fogueira: "Pressione **E** para usar fogueira"
+  - 🔨 Bancada: "Pressione **E** para usar bancada"
+  - 🏠 Cabana: "Pressione **E** para entrar na cabana"
+  - 👧 Criança: "Pressione **E** para resgatar criança"
+
+### 🔧 Alterações Técnicas
+
+##### `js/world.js`
+- Tile `WATER` agora tem `interactable: true` e `type: 'water'`
+
+##### `js/player.js`
+- `interactWithTile()`: case `water` restaura 20 sede, informa sobre cantil cheio
+
+##### `js/game.js`
+- `checkNearbyInteractions()`: detecta tipo do tile adjacente e mostra prompt contextual
+
+### 🐛 Correções
+
+- Botão "Usar" do inventário funciona para todos os itens (armadilhas, cabanas, cercas, comida, equipamentos)
+- Construções (cerca/cabana) bloqueadas se jogador estiver sobrepondo o tile
+- Barras de fome/sede visíveis (z-index do HUD corrigido)
+- CraftingSystem e CabinUI null-safe (não crasham se HTML incompleto)
+
+---
+
 ## [1.6.0] - 2026-07-21
 
 ### ✨ Novas Funcionalidades
