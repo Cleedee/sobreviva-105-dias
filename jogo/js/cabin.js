@@ -9,9 +9,10 @@ class CabinUI {
         this.currentCabinY = 0;
         this.selectedInventorySlot = -1;
         
-        document.getElementById('close-cabin-btn').addEventListener('click', () => {
-            this.close();
-        });
+        const closeBtn = document.getElementById('close-cabin-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.close());
+        }
     }
     
     open(cabinX, cabinY) {

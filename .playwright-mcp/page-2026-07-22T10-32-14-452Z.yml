@@ -1,0 +1,11 @@
+- generic [ref=f3e3]:
+  - heading "🌲 Sobreviva 105 Dias" [level=1] [ref=f3e4]
+  - paragraph [ref=f3e5]: em uma Floresta
+  - button "Iniciar Jogo" [ref=f3e6] [cursor=pointer]
+  - generic [ref=f3e7]:
+    - paragraph [ref=f3e8]:
+      - strong [ref=f3e9]: "Controles:"
+    - paragraph [ref=f3e10]: WASD ou Setas - Mover
+    - paragraph [ref=f3e11]: E - Coletar / Interagir
+    - paragraph [ref=f3e12]: I - Inventário
+    - paragraph [ref=f3e13]: SPACE - Atacar

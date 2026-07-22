@@ -101,17 +101,20 @@ class CraftingSystem {
         this.recipes = RECIPES;
         this.selectedRecipe = null;
         
-        // Botão de fechar
-        document.getElementById('close-crafting-btn').addEventListener('click', () => {
-            this.close();
-        });
+        // Botão de fechar (null-safe para HTMLs incompletos)
+        const closeBtn = document.getElementById('close-crafting-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.close());
+        }
     }
 
     // Abrir/fechar painel de crafting
     toggle() {
+        const panel = document.getElementById('crafting-screen');
+        if (!panel) return;
+        
         this.isOpen = !this.isOpen;
 
-        const panel = document.getElementById('crafting-screen');
         if (this.isOpen) {
             panel.classList.remove('hidden');
             this.selectedRecipe = null;
@@ -125,9 +128,11 @@ class CraftingSystem {
 
     // Abrir crafting
     open() {
+        const panel = document.getElementById('crafting-screen');
+        if (!panel) return;
+        
         if (!this.isOpen) {
             this.isOpen = true;
-            const panel = document.getElementById('crafting-screen');
             panel.classList.remove('hidden');
             this.selectedRecipe = null;
             this.renderRecipes();
@@ -137,9 +142,12 @@ class CraftingSystem {
 
     // Fechar crafting
     close() {
+        const panel = document.getElementById('crafting-screen');
+        if (!panel) return;
+        
         if (this.isOpen) {
             this.isOpen = false;
-            document.getElementById('crafting-screen').classList.add('hidden');
+            panel.classList.add('hidden');
             this.updateTouchVisibility(true);
         }
     }
