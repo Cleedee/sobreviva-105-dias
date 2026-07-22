@@ -14,15 +14,15 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Animações e efeitos especiais
 
 ### Crafting
-- [ ] Criar interface de crafting
-- [ ] Sistema de receitas descobertas
-- [ ] Bancada de trabalho funcional
-- [ ] Receitas iniciais:
-  - [ ] Lança de madeira (2 madeira + 1 fibra)
-  - [ ] Picareta (2 madeira + 2 pedra)
-  - [ ] Bolsa (3 fibra)
-  - [ ] Cerca (3 madeira)
-  - [ ] Armadilha (2 madeira + 1 pedra)
+- [x] Criar interface de crafting
+- [x] Sistema de receitas descobertas
+- [x] Bancada de trabalho funcional
+- [x] Receitas iniciais:
+  - [x] Lança de madeira (2 madeira + 1 fibra)
+  - [x] Picareta (2 madeira + 2 pedra)
+  - [x] Bolsa (3 fibra)
+  - [x] Cerca (3 madeira)
+  - [x] Armadilha (2 madeira + 1 pedra)
 
 ### Crianças
 - [ ] Sistema de fome/sede das crianças

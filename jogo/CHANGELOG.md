@@ -4,6 +4,96 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.3.0] - 2026-07-21
+
+### 🔧 Correções
+
+#### 🌿 Coleta de Recursos
+- **Fibra**: Adicionado tile `TALL_GRASS` (grama alta) que gera aleatoriamente no mapa
+  - Interaja com **E** para coletar 1-3 fibras (sem ferramenta)
+  - Renderiza como hastes verdes com animação de vento
+- **Pedra**: Agora é possível coletar pedra **sem picareta** (mão livre)
+  - Sem picareta: 1 pedra por tile
+  - Com picareta: 2-4 pedras por tile (mais eficiente)
+- **Corrigido ciclo vicioso** que impedia progressão (precisava de pedra para craftar picareta, mas precisava de picareta para minerar pedra)
+
+### 🎮 Gameplay
+- Fluxo de craft agora funciona desde o início:
+  ```
+  Grama alta → Fibra (mão livre)
+  Pedra → 1 pedra (mão livre) / 2-4 (picareta)
+  Árvore → Madeira (machado)
+  → Craftar Picareta → Minerar mais pedra
+  ```
+
+### 🔧 Alterações Técnicas
+
+#### Arquivos Modificados
+
+##### `js/world.js`
+- Adicionado tile type `TALL_GRASS` com geração procedural
+- Adicionada renderização de grama alta com animação de vento
+
+##### `js/player.js`
+- `interactWithTile('rock')`: permite coleta sem picareta (1 pedra)
+- Adicionado case `'tall_grass'`: coleta de fibra (1-3)
+
+---
+
+## [1.2.0] - 2026-07-21
+
+### ✨ Novas Funcionalidades
+
+#### 🔨 Sistema de Crafting
+- Implementado sistema completo de crafting com receitas
+- Interface de crafting com lista de receitas e painel de detalhes
+- Verificação automática de materiais disponíveis
+- 6 receitas iniciais implementadas:
+  - **Lança de Madeira** (2 Madeira + 1 Fibra) → Arma básica
+  - **Picareta** (2 Madeira + 2 Pedra) → Para minerar pedras
+  - **Bolsa Pequena** (3 Fibra) → +5 slots no inventário
+  - **Cerca** (3 Madeira) → 2 unidades, proteção básica
+  - **Armadilha** (2 Madeira + 1 Pedra) → Para armadilhar inimigos
+  - **Carne Assada** (1 Carne) → Cozinhada na fogueira
+
+#### 🎮 Integração com o Jogo
+- Tecla **C** abre/fecha o painel de crafting
+- Interação com a **Bancada de Trabalho** abre o crafting
+- Suporte a controles touch para crafting
+- Bloqueio de atualização do jogo quando painel está aberto
+
+### 🔧 Alterações Técnicas
+
+#### Novos Arquivos
+| Arquivo | Descrição |
+|---------|-----------|
+| `js/crafting.js` | Classe `CraftingSystem` - Gerencia receitas e UI de crafting |
+
+#### Arquivos Modificados
+
+##### `js/input.js`
+- Adicionado método `isCrafting()` para tecla C
+
+##### `js/game.js`
+- Instância de `CraftingSystem` adicionada
+- `update()` verifica input de crafting e bloqueia jogo quando aberto
+- `update()` abre crafting quando interagir retorna `crafting: true`
+
+##### `js/touch.js`
+- `handleQuickTap('interact')` agora abre crafting quando result.crafting é true
+
+##### `index.html`
+- Adicionado painel de crafting com lista e detalhes de receitas
+- Adicionado script `js/crafting.js`
+- Atualizada lista de controles (C - Craftar)
+
+##### `css/style.css`
+- Estilos para `#crafting-screen`, `.crafting-panel`, `.crafting-layout`
+- Estilos para `.recipe-list`, `.recipe-item`, `.recipe-detail`
+- Botão de craftar com estados (habilitado/desabilitado)
+
+---
+
 ## [1.1.0] - 2026-07-21
 
 ### ✨ Novas Funcionalidades

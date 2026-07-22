@@ -356,6 +356,205 @@ body {
     background-color: #4b5563;
 }
 
+/* Crafting Screen */
+#crafting-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+}
+
+.crafting-panel {
+    background-color: #1f2937;
+    padding: 30px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 500px;
+    max-width: 700px;
+}
+
+.crafting-panel h2 {
+    color: #f59e0b;
+    text-align: center;
+}
+
+.crafting-layout {
+    display: flex;
+    gap: 20px;
+    min-height: 300px;
+}
+
+.recipe-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.recipe-item {
+    background-color: #374151;
+    border: 2px solid #4b5563;
+    border-radius: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.recipe-item:hover {
+    border-color: #f59e0b;
+    background-color: #4b5563;
+}
+
+.recipe-item.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.recipe-item.disabled:hover {
+    border-color: #4b5563;
+    background-color: #374151;
+}
+
+.recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.recipe-name {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.recipe-qty {
+    color: #f59e0b;
+    font-size: 0.85rem;
+}
+
+.recipe-ingredients {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.recipe-ingredient {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background-color: #1f2937;
+}
+
+.recipe-ingredient.enough {
+    color: #4ade80;
+}
+
+.recipe-ingredient.missing {
+    color: #ef4444;
+}
+
+.recipe-detail {
+    flex: 1;
+    background-color: #111827;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.recipe-placeholder {
+    color: #6b7280;
+    text-align: center;
+}
+
+.recipe-detail h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.recipe-desc {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.recipe-result-qty {
+    color: #f59e0b;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+.recipe-detail-ingredients {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.detail-ingredient {
+    padding: 4px 0;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #374151;
+}
+
+.detail-ingredient.enough {
+    color: #4ade80;
+}
+
+.detail-ingredient.missing {
+    color: #ef4444;
+}
+
+#craft-btn {
+    padding: 10px 30px;
+    font-size: 1.1rem;
+    background-color: #f59e0b;
+    color: #1f2937;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+#craft-btn:hover {
+    background-color: #d97706;
+}
+
+#craft-btn.disabled {
+    background-color: #4b5563;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+#close-crafting-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #374151;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    align-self: center;
+}
+
+#close-crafting-btn:hover {
+    background-color: #4b5563;
+}
+
 /* Utility Classes */
 .hidden {
     display: none !important;

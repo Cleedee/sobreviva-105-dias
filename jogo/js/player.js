@@ -205,15 +205,24 @@ class Player {
                 // Minerar pedra
                 if (this.hasTool('pickaxe')) {
                     world.removeTile(x, y);
-                    this.inventory.addItem(ITEMS.STONE, MathUtils.randomInt(1, 3));
+                    this.inventory.addItem(ITEMS.STONE, MathUtils.randomInt(2, 4));
                     return { success: true, message: 'Coletou pedra!' };
                 }
-                return { success: false, message: 'Precisa de uma picareta!' };
+                // Mão livre - coleta menos pedra
+                world.removeTile(x, y);
+                this.inventory.addItem(ITEMS.STONE, 1);
+                return { success: true, message: 'Recolheu 1 pedra com as mãos.' };
                 
             case 'berry_bush':
                 // Colher frutas
                 this.inventory.addItem(ITEMS.BERRY, MathUtils.randomInt(2, 5));
                 return { success: true, message: 'Coletou frutas!' };
+                
+            case 'tall_grass':
+                // Cortar grama alta para fibra
+                world.removeTile(x, y);
+                this.inventory.addItem(ITEMS.FIBER, MathUtils.randomInt(1, 3));
+                return { success: true, message: 'Coletou fibra!' };
                 
             case 'water':
                 // Encher cantil

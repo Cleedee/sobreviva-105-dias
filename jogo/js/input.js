@@ -110,6 +110,10 @@ class InputManager {
     isPause() { 
         return this.wasPressed('escape'); 
     }
+    
+    isCrafting() {
+        return this.wasPressed('c');
+    }
 }
 
 // Instância global

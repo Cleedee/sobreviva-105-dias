@@ -18,6 +18,7 @@
                 <p>WASD ou Setas - Mover</p>
                 <p>E - Coletar / Interagir</p>
                 <p>I - Inventário</p>
+                <p>C - Craftar (na bancada)</p>
                 <p>SPACE - Atacar</p>
             </div>
         </div>
@@ -99,6 +100,20 @@
             </div>
         </div>
 
+        <!-- Crafting Screen -->
+        <div id="crafting-screen" class="hidden">
+            <div class="crafting-panel">
+                <h2>🔨 Bancada de Trabalho</h2>
+                <div class="crafting-layout">
+                    <div id="recipe-list" class="recipe-list"></div>
+                    <div id="recipe-detail" class="recipe-detail">
+                        <p class="recipe-placeholder">Selecione uma receita para ver os detalhes</p>
+                    </div>
+                </div>
+                <button id="close-crafting-btn">Fechar (C)</button>
+            </div>
+        </div>
+
         <!-- Pause Menu -->
         <div id="pause-menu" class="hidden">
             <div class="menu-panel">
@@ -119,6 +134,7 @@
     <script src="js/player.js"></script>
     <script src="js/world.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/crafting.js"></script>
     <script src="js/game.js"></script>
     <script src="js/main.js"></script>
 </body>

@@ -13,6 +13,7 @@ const TILE_TYPES = {
     TREE: { id: 30, name: 'Árvore', solid: true, color: TILE_COLORS.TREE_TRUNK, interactable: true, type: 'tree' },
     ROCK: { id: 31, name: 'Pedra', solid: true, color: TILE_COLORS.ROCK, interactable: true, type: 'rock' },
     BERRY_BUSH: { id: 32, name: 'Arbusto', solid: false, color: '#228B22', interactable: true, type: 'berry_bush' },
+    TALL_GRASS: { id: 33, name: 'Grama Alta', solid: false, color: '#5a9c4a', interactable: true, type: 'tall_grass' },
     CAMPFIRE: { id: 40, name: 'Fogueira', solid: false, color: '#ff6600', interactable: true, type: 'campfire' },
     WORKBENCH: { id: 41, name: 'Bancada', solid: true, color: '#8B4513', interactable: true, type: 'workbench' },
     CABIN: { id: 42, name: 'Cabana', solid: true, color: '#654321', interactable: true, type: 'cabin' },
@@ -89,6 +90,9 @@ class World {
         } else if (noise3 > 0.7 && Math.random() > 0.97) {
             // Arbusto de frutas
             return { ...TILE_TYPES.BERRY_BUSH };
+        } else if (noise3 > 0.55 && Math.random() > 0.92) {
+            // Grama alta (fibra)
+            return { ...TILE_TYPES.TALL_GRASS };
         } else {
             // Grama variada
             const grassVariant = Math.random();
@@ -374,6 +378,21 @@ class World {
                 ctx.arc(x + 12, y + 16, 3, 0, Math.PI * 2);
                 ctx.arc(x + 20, y + 18, 3, 0, Math.PI * 2);
                 ctx.fill();
+                break;
+                
+            case 'tall_grass':
+                // Grama alta - hastes verdes
+                ctx.strokeStyle = '#3d7a2e';
+                ctx.lineWidth = 2;
+                const grassOffset = (Date.now() / 800 + tileX * 3 + tileY * 7) % 6;
+                for (let i = 0; i < 5; i++) {
+                    const gx = x + 4 + i * 6;
+                    const sway = Math.sin(grassOffset + i) * 2;
+                    ctx.beginPath();
+                    ctx.moveTo(gx, y + 28);
+                    ctx.lineTo(gx + sway, y + 8);
+                    ctx.stroke();
+                }
                 break;
                 
             case 'campfire':

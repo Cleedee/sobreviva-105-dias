@@ -207,6 +207,9 @@ class TouchControls {
                     if (result && result.message) {
                         game.ui.showMessage(result.message);
                     }
+                    if (result && result.crafting && game.crafting) {
+                        game.crafting.open();
+                    }
                 }
                 break;
         }

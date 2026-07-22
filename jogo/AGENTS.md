@@ -19,6 +19,7 @@ jogo/
 │   ├── input.js        # Sistema de entrada (teclado)
 │   ├── time.js         # Ciclo dia/noite
 │   ├── inventory.js    # Inventário e definição de itens
+│   ├── crafting.js     # Sistema de crafting e receitas
 │   ├── player.js       # Classe Player
 │   ├── world.js        # Geração de mapa, inimigos, entidades
 │   ├── ui.js           # Interface do usuário
@@ -122,7 +123,7 @@ input → update(dt) → render() → input.clearFrame()
 ### Novo Item
 1. Adicionar definição em `inventory.js` no objeto `ITEMS`
 2. Adicionar lógica de uso em `Player.useItem()`
-3. Adicionar receita de crafting (se aplicável)
+3. Adicionar receita de crafting em `crafting.js` no array `RECIPES` (se aplicável)
 
 ### Novo Inimigo
 1. Criar classe em `world.js` herdando de `Enemy`
