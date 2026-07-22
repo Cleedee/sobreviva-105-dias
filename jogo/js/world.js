@@ -601,6 +601,45 @@ class World {
                 ctx.quadraticCurveTo(x + 16, y + 16 + Math.sin(waveOffset + 1) * 2, x + 32, y + 16 + Math.sin(waveOffset + 2) * 2);
                 ctx.stroke();
                 break;
+
+            case 'cabin':
+                // Base de pedra
+                ctx.fillStyle = '#8B7355';
+                ctx.fillRect(x + 2, y + 26, 28, 6);
+                // Paredes de madeira
+                ctx.fillStyle = '#8B6914';
+                ctx.fillRect(x + 4, y + 10, 24, 18);
+                // Telhado
+                ctx.fillStyle = '#A0522D';
+                ctx.beginPath();
+                ctx.moveTo(x + 16, y + 2);
+                ctx.lineTo(x + 2, y + 12);
+                ctx.lineTo(x + 30, y + 12);
+                ctx.closePath();
+                ctx.fill();
+                // Porta
+                ctx.fillStyle = '#5C3317';
+                ctx.fillRect(x + 13, y + 18, 6, 10);
+                // Janela
+                ctx.fillStyle = '#87CEEB';
+                ctx.fillRect(x + 22, y + 14, 5, 5);
+                ctx.strokeStyle = '#5C3317';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x + 22, y + 14, 5, 5);
+                break;
+
+            case 'fence':
+                // Cercas - postes e barras horizontais
+                ctx.fillStyle = '#8B6914';
+                // Postes verticais
+                ctx.fillRect(x + 2, y + 6, 3, 22);
+                ctx.fillRect(x + 14, y + 6, 3, 22);
+                ctx.fillRect(x + 27, y + 6, 3, 22);
+                // Barras horizontais
+                ctx.fillStyle = '#A0782C';
+                ctx.fillRect(x + 2, y + 10, 28, 3);
+                ctx.fillRect(x + 2, y + 20, 28, 3);
+                break;
         }
         
         ctx.restore();
