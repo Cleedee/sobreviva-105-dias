@@ -45,6 +45,11 @@ class GameUI {
             this.toggleInventory();
         });
         
+        // Fechar inventário (botão X)
+        document.getElementById('close-inventory-x').addEventListener('click', () => {
+            this.toggleInventory();
+        });
+        
         // Pausa
         document.getElementById('resume-btn').addEventListener('click', () => {
             this.togglePause();

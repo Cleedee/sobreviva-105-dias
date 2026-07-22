@@ -65,6 +65,10 @@ class TouchControls {
                     <span class="btn-icon">👆</span>
                     <span class="btn-label">Ação</span>
                 </button>
+                <button id="btn-craft" class="action-btn">
+                    <span class="btn-icon">🔨</span>
+                    <span class="btn-label">Craft</span>
+                </button>
                 <button id="btn-inventory" class="action-btn">
                     <span class="btn-icon">🎒</span>
                     <span class="btn-label">Itens</span>
@@ -103,6 +107,7 @@ class TouchControls {
         // Botões de ação
         const btnAttack = document.getElementById('btn-attack');
         const btnInteract = document.getElementById('btn-interact');
+        const btnCraft = document.getElementById('btn-craft');
         const btnInventory = document.getElementById('btn-inventory');
         const btnPause = document.getElementById('btn-pause');
         
@@ -125,6 +130,14 @@ class TouchControls {
             e.preventDefault();
             if (game && game.ui) {
                 game.ui.toggleInventory();
+            }
+        }, { passive: false });
+        
+        // Craft - toggle
+        btnCraft.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (game && game.crafting) {
+                game.crafting.toggle();
             }
         }, { passive: false });
         
