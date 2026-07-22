@@ -4,6 +4,41 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.4.0] - 2026-07-21
+
+### ✨ Novas Funcionalidades
+
+#### 📱 PWA (Progressive Web App)
+- O jogo agora pode ser **instalado** em desktop e celular
+- **Mobile**:菜单 do navegador → "Adicionar à tela inicial" → app standalone
+- **Desktop (Chrome/Edge)**: ícone de instalar na barra de endereço
+- Funciona **offline** após primeiro carregamento (cache de todos os assets)
+
+#### 🗂️ Novos Arquivos
+| Arquivo | Descrição |
+|---------|-----------|
+| `manifest.json` | Manifest PWA com ícones, nome, cores |
+| `sw.js` | Service Worker com cache first + network fallback |
+| `assets/icons/icon-192.png` | Ícone 192x192 para PWA |
+| `assets/icons/icon-512.png` | Ícone 512x512 para PWA |
+
+#### 🔧 Alterações Técnicas
+
+##### `index.html` (raiz e jogo/)
+- Adicionado `<link rel="manifest">` vinculando manifest.json
+- Meta tags: `theme-color`, `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`
+- `<link rel="apple-touch-icon">` para iOS
+- `<meta name="viewport" user-scalable=no">` prevenir zoom indesejado
+- Registro automático do Service Worker
+
+##### `sw.js`
+- Cache de todos os assets do jogo na instalação
+- Estratégia **cache first**: assets servidos do cache, network como fallback
+- Limpeza automática de caches antigos na atualização
+- Fallback offline para navegação
+
+---
+
 ## [1.3.0] - 2026-07-21
 
 ### 🔧 Correções

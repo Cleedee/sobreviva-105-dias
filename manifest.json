@@ -1,0 +1,26 @@
+{
+    "name": "Sobreviva 105 Dias em uma Floresta",
+    "short_name": "Sobreviva 105",
+    "description": "Jogo de sobrevivência na floresta. Resgate 6 crianças e sobreviva por 105 dias!",
+    "start_url": "./jogo/index.html",
+    "display": "standalone",
+    "orientation": "any",
+    "background_color": "#1a1a2e",
+    "theme_color": "#22c55e",
+    "lang": "pt-BR",
+    "icons": [
+        {
+            "src": "jogo/assets/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "jogo/assets/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["games", "entertainment"]
+}
