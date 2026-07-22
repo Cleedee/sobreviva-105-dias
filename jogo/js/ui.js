@@ -57,7 +57,7 @@ class GameUI {
         
         // Pausa
         document.getElementById('resume-btn').addEventListener('click', () => {
-            this.togglePause();
+            if (game) game.togglePause();
         });
         
         // Ajuda

@@ -1,0 +1,33 @@
+- generic [ref=e2]:
+  - generic:
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - generic [ref=e17]: ❤️ Vida
+        - generic [ref=e20]: "100"
+      - generic [ref=e21]:
+        - generic [ref=e22]: 🍖 Fome
+        - generic [ref=e25]: "100"
+      - generic [ref=e26]:
+        - generic [ref=e27]: 💧 Sede
+        - generic [ref=e30]: "100"
+    - generic [ref=e31]:
+      - generic [ref=e32]: "Dia: 1"
+      - generic [ref=e33]: 🌅
+      - generic [ref=e34]: "Noites: 0"
+    - generic [ref=e35]: "👧 Crianças: 0 / 6"
+    - generic [ref=e36]:
+      - generic "🪓 Machado" [ref=e37] [cursor=pointer]: 🪓
+      - generic "🫗 Cantil com Água" [ref=e38] [cursor=pointer]:
+        - text: 🫗
+        - generic [ref=e39]: "2"
+      - generic "🫗 Cantil com Água" [ref=e40] [cursor=pointer]: 🫗
+      - generic "🍎 Maçã" [ref=e41] [cursor=pointer]:
+        - text: 🍎
+        - generic [ref=e42]: "5"
+      - generic "🍎 Maçã" [ref=e43] [cursor=pointer]:
+        - text: 🍎
+        - generic [ref=e44]: "4"
+    - generic [ref=e46]:
+      - text: Pressione
+      - strong [ref=e47]: E
+      - text: para interagir

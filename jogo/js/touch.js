@@ -144,8 +144,8 @@ class TouchControls {
         // Pause
         btnPause.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            if (game && game.ui) {
-                game.ui.togglePause();
+            if (game) {
+                game.togglePause();
             }
         }, { passive: false });
         
