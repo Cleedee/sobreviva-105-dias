@@ -188,7 +188,10 @@ class Player {
         
         // Tentar colocar cabana no chão
         if (tile && !tile.solid && tile.type !== 'water') {
-            if (this.inventory.hasItem('cabin')) {
+            const TS = GAME_CONFIG.TILE_SIZE;
+            const overlap = this.x < (checkX + 1) * TS && this.x + this.width > checkX * TS &&
+                            this.y < (checkY + 1) * TS && this.y + this.height > checkY * TS;
+            if (!overlap && this.inventory.hasItem('cabin')) {
                 const cabinIndex = this.inventory.slots.findIndex(s => s && s.id === 'cabin');
                 this.inventory.removeItem(cabinIndex);
                 world.setTile(checkX, checkY, { ...TILE_TYPES.CABIN });

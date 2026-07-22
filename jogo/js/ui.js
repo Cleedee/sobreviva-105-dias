@@ -243,7 +243,11 @@ class GameUI {
             }
             
             const tile = game.world.getTile(checkX, checkY);
-            if (tile && !tile.solid && tile.type !== 'water') {
+            const TS = GAME_CONFIG.TILE_SIZE;
+            const overlap = game.player.x < (checkX + 1) * TS && game.player.x + game.player.width > checkX * TS &&
+                            game.player.y < (checkY + 1) * TS && game.player.y + game.player.height > checkY * TS;
+            
+            if (tile && !tile.solid && tile.type !== 'water' && !overlap) {
                 const slotIndex = inventory.selectedSlot;
                 inventory.removeItem(slotIndex);
                 
