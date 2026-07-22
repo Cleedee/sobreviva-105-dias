@@ -102,11 +102,16 @@ class GameUI {
         this.statusBars[type].style.width = `${percentage}%`;
         this.statusValues[type].textContent = Math.ceil(value);
         
-        // Mudar cor se baixo
+        // Resetar cor base conforme tipo
+        const coresBase = { health: '#ef4444', hunger: '#f97316', thirst: '#3b82f6' };
+        const bar = this.statusBars[type];
+        
         if (percentage < 25) {
-            this.statusBars[type].style.backgroundColor = '#dc2626';
+            bar.style.backgroundColor = '#dc2626';
         } else if (percentage < 50) {
-            this.statusBars[type].style.backgroundColor = '#f97316';
+            bar.style.backgroundColor = coresBase[type] === '#ef4444' ? '#dc2626' : '#f59e0b';
+        } else {
+            bar.style.backgroundColor = coresBase[type];
         }
     }
     
