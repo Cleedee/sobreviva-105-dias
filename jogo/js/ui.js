@@ -50,6 +50,11 @@ class GameUI {
             this.toggleInventory();
         });
         
+        // Usar item
+        document.getElementById('use-item-btn').addEventListener('click', () => {
+            this.useSelectedItem();
+        });
+        
         // Pausa
         document.getElementById('resume-btn').addEventListener('click', () => {
             this.togglePause();
@@ -181,6 +186,7 @@ class GameUI {
             document.getElementById('item-name').textContent = item.name;
             document.getElementById('item-description').textContent = item.description;
             document.getElementById('use-item-btn').classList.remove('hidden');
+            this.updateUseButtonLabel(item);
         } else {
             document.getElementById('item-name').textContent = 'Vazio';
             document.getElementById('item-description').textContent = '';
@@ -188,6 +194,107 @@ class GameUI {
         }
         
         this.updateInventoryGrid();
+    }
+    
+    updateUseButtonLabel(item) {
+        const btn = document.getElementById('use-item-btn');
+        if (!item) { btn.textContent = 'Usar'; return; }
+        
+        switch (item.id) {
+            case 'trap': btn.textContent = '🪤 Colocar'; break;
+            case 'cabin': btn.textContent = '🏠 Construir'; break;
+            case 'fence': btn.textContent = '🚧 Colocar'; break;
+            case 'wooden_spear':
+            case 'stone_sword':
+            case 'axe':
+            case 'pickaxe': btn.textContent = '⚔️ Equipar'; break;
+            default: btn.textContent = 'Usar';
+        }
+    }
+    
+    useSelectedItem() {
+        if (!game || !game.player) return;
+        
+        const inventory = game.player.inventory;
+        const item = inventory.slots[inventory.selectedSlot];
+        if (!item) return;
+        
+        // Itens de construção: fechar inventário e colocar no mundo
+        if (item.id === 'trap' || item.id === 'cabin' || item.id === 'fence') {
+            this.toggleInventory();
+            
+            // Calcular tile na facing direction
+            const player = game.player;
+            const tileX = Math.floor((player.x + player.width / 2) / GAME_CONFIG.TILE_SIZE);
+            const tileY = Math.floor((player.y + player.height / 2) / GAME_CONFIG.TILE_SIZE);
+            
+            let checkX = tileX;
+            let checkY = tileY;
+            switch (player.facing) {
+                case 'up': checkY--; break;
+                case 'down': checkY++; break;
+                case 'left': checkX--; break;
+                case 'right': checkX++; break;
+            }
+            
+            const tile = game.world.getTile(checkX, checkY);
+            if (tile && !tile.solid && tile.type !== 'water') {
+                const slotIndex = inventory.selectedSlot;
+                inventory.removeItem(slotIndex);
+                
+                if (item.id === 'trap') {
+                    game.world.placeTrap(checkX, checkY);
+                    this.showMessage('Armadilha armada!');
+                } else if (item.id === 'cabin') {
+                    game.world.setTile(checkX, checkY, { ...TILE_TYPES.CABIN });
+                    this.showMessage('Cabana construída!');
+                } else if (item.id === 'fence') {
+                    game.world.setTile(checkX, checkY, {
+                        id: 43, name: 'Cerca', solid: true, color: '#8B6914',
+                        interactable: false, type: 'fence'
+                    });
+                    this.showMessage('Cerca colocada!');
+                }
+            } else {
+                this.showMessage('Não é possível colocar aqui!');
+            }
+            return;
+        }
+        
+        // Comida e bebida: consumir
+        if (item.type === 'food' || item.type === 'drink') {
+            const result = inventory.useItem(inventory.selectedSlot);
+            if (result) {
+                if (result.type === 'hunger') {
+                    game.player.hunger = Math.min(game.player.hunger + result.amount, game.player.maxHunger);
+                    this.showMessage(`Comeu ${item.name}! (+${result.amount} fome)`);
+                } else if (result.type === 'thirst') {
+                    game.player.thirst = Math.min(game.player.thirst + result.amount, game.player.maxThirst);
+                    this.showMessage(`Bebeu ${item.name}! (+${result.amount} sede)`);
+                }
+            }
+            this.updateInventoryGrid();
+            this.onInventorySlotClick(inventory.selectedSlot);
+            return;
+        }
+        
+        // Armas e ferramentas: equipar
+        if (item.type === 'weapon' || item.type === 'tool') {
+            game.player.equippedItem = item;
+            this.showMessage(`Equipou ${item.name}!`);
+            this.updateInventoryGrid();
+            return;
+        }
+        
+        // Mochilas: expandir inventário
+        if (item.type === 'bag') {
+            inventory.expand(item.extraSlots);
+            inventory.removeItem(inventory.selectedSlot);
+            this.showMessage(`Mochila usada! +${item.extraSlots} slots`);
+            this.updateInventoryGrid();
+            this.onInventorySlotClick(inventory.selectedSlot);
+            return;
+        }
     }
     
     updateMinimap(player, world) {
