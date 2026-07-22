@@ -35,6 +35,11 @@ class World {
         // Objetos interativos
         this.interactables = [];
         
+        // Armazenamento de cabanas: "x,y" → [items...]
+        this.cabinStorage = {};
+        // Crianças nas cabanas: "x,y" → [childIds...]
+        this.cabinChildren = {};
+        
         // Campamento inicial
         this.campX = 0;
         this.campY = 0;
@@ -275,7 +280,7 @@ class World {
                     child.y += Math.sin(angle) * 1.5;
                 }
                 
-                // Decair status
+                // Decair status (taxa normal)
                 child.hunger -= 0.1 * deltaTime;
                 child.thirst -= 0.12 * deltaTime;
                 child.hunger = MathUtils.clamp(child.hunger, 0, 100);
@@ -283,10 +288,72 @@ class World {
             }
         }
         
+        // Crianças em cabanas: consumir comida/água do estoque (taxa reduzida)
+        this.updateCabinChildren(deltaTime);
+        
         // Lua cheia - Monstro se alimenta
         if (timeManager.isMoonActive() && this.children.length > 0) {
             // Lógica do Monstro Bugado (simplificada por agora)
             // TODO: Implementar monstro especial
+        }
+    }
+    
+    updateCabinChildren(deltaTime) {
+        // Consumo a cada ~10 segundos (taxa mais lenta que seguir)
+        const CONSUME_INTERVAL = 10;
+        this._consumeTimer = (this._consumeTimer || 0) + deltaTime;
+        
+        if (this._consumeTimer < CONSUME_INTERVAL) return;
+        this._consumeTimer = 0;
+        
+        for (const key of Object.keys(this.cabinChildren)) {
+            const childIds = this.cabinChildren[key];
+            if (childIds.length === 0) continue;
+            
+            const storage = this.cabinStorage[key] || [];
+            
+            for (const childId of childIds) {
+                const child = this.children.find(c => c.id === childId);
+                if (!child) continue;
+                
+                // Reduzir fome/sede (taxa 30% da normal)
+                child.hunger -= 0.03 * CONSUME_INTERVAL;
+                child.thirst -= 0.036 * CONSUME_INTERVAL;
+                child.hunger = MathUtils.clamp(child.hunger, 0, 100);
+                child.thirst = MathUtils.clamp(child.thirst, 0, 100);
+                
+                // Se fome < 50, tentar comer do estoque
+                if (child.hunger < 50) {
+                    const foodIndex = storage.findIndex(s => s && (s.type === 'food' || s.type === 'drink'));
+                    if (foodIndex !== -1) {
+                        const item = storage[foodIndex];
+                        if (item.type === 'food' && item.hungerRestore) {
+                            child.hunger = MathUtils.clamp(child.hunger + item.hungerRestore * 0.5, 0, 100);
+                        } else if (item.type === 'drink' && item.thirstRestore) {
+                            child.thirst = MathUtils.clamp(child.thirst + item.thirstRestore * 0.5, 0, 100);
+                        }
+                        item.quantity -= 1;
+                        if (item.quantity <= 0) {
+                            storage.splice(foodIndex, 1);
+                        }
+                    }
+                }
+                
+                // Se sede < 50, tentar beber do estoque
+                if (child.thirst < 50) {
+                    const drinkIndex = storage.findIndex(s => s && s.type === 'drink');
+                    if (drinkIndex !== -1) {
+                        const item = storage[drinkIndex];
+                        if (item.thirstRestore) {
+                            child.thirst = MathUtils.clamp(child.thirst + item.thirstRestore * 0.5, 0, 100);
+                        }
+                        item.quantity -= 1;
+                        if (item.quantity <= 0) {
+                            storage.splice(drinkIndex, 1);
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -307,6 +374,29 @@ class World {
     
     inBounds(x, y) {
         return x >= 0 && x < this.width && y >= 0 && y < this.height;
+    }
+    
+    // Chave para armazenamento de cabanas
+    cabinKey(x, y) {
+        return `${x},${y}`;
+    }
+    
+    // Obter storage de uma cabana
+    getCabinStorage(x, y) {
+        const key = this.cabinKey(x, y);
+        if (!this.cabinStorage[key]) {
+            this.cabinStorage[key] = [];
+        }
+        return this.cabinStorage[key];
+    }
+    
+    // Obter crianças de uma cabana
+    getCabinChildren(x, y) {
+        const key = this.cabinKey(x, y);
+        if (!this.cabinChildren[key]) {
+            this.cabinChildren[key] = [];
+        }
+        return this.cabinChildren[key];
     }
     
     // Renderizar tiles visíveis
@@ -457,16 +547,47 @@ class World {
     
     // Renderizar crianças e interativos
     renderInteractables(ctx, camera, timeManager) {
-        // Crianças
+        // Crianças (fora de cabanas)
         for (const child of this.children) {
-            this.renderChild(ctx, camera, child, timeManager);
+            if (!this.isChildInCabin(child.id)) {
+                this.renderChild(ctx, camera, child, timeManager);
+            }
         }
+        
+        // Crianças dentro de cabanas (ícone sobre a cabana)
+        this.renderCabinChildren(ctx, camera);
         
         // Entidades interativas
         for (const obj of this.interactables) {
             if (!obj.rescued) {
                 this.renderInteractable(ctx, camera, obj, timeManager);
             }
+        }
+    }
+    
+    isChildInCabin(childId) {
+        for (const key of Object.keys(this.cabinChildren)) {
+            if (this.cabinChildren[key].includes(childId)) return true;
+        }
+        return false;
+    }
+    
+    renderCabinChildren(ctx, camera) {
+        for (const key of Object.keys(this.cabinChildren)) {
+            const childIds = this.cabinChildren[key];
+            if (childIds.length === 0) continue;
+            
+            const [cx, cy] = key.split(',').map(Number);
+            const screenX = cx * GAME_CONFIG.TILE_SIZE - camera.x;
+            const screenY = cy * GAME_CONFIG.TILE_SIZE - camera.y;
+            
+            // Ícone de crianças na cabana
+            ctx.save();
+            ctx.fillStyle = '#f472b6';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`👧×${childIds.length}`, screenX + 16, screenY - 4);
+            ctx.restore();
         }
     }
     

@@ -81,6 +81,17 @@ const RECIPES = [
             { itemId: 'meat', quantity: 1, name: '🥩 Carne' }
         ],
         requiresNear: 'campfire'
+    },
+    {
+        id: 'cabin',
+        name: '🏠 Cabana',
+        description: 'Abrigo para crianças e armazenamento de itens.',
+        result: { ...ITEMS.CABIN },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'wood', quantity: 8, name: '🪵 Madeira' },
+            { itemId: 'fiber', quantity: 4, name: '🌿 Fibra' }
+        ]
     }
 ];
 

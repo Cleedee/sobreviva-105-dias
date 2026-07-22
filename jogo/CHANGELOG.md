@@ -4,6 +4,71 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.5.0] - 2026-07-21
+
+### ✨ Novas Funcionalidades
+
+#### 🏠 Sistema de Cabanas
+
+##### Construção
+- **Receita de crafting**: 8 Madeira + 4 Fibra → 1 Cabana
+- Colocar cabana: segure o item da cabana e interaja com grama
+- Cabana vira tile sólido no mundo
+
+##### Gerenciamento (interaja com cabana)
+- **Estoque da cabana**: guardar e retirar itens
+  - Itens empilháveis se somam automaticamente
+  - Cabe qualquer tipo de item
+- **Crianças**: enviar para cabana ou chamar de volta
+  - Crianças na cabana aparecem como ícone `👧×N` sobre a cabana
+  - Crianças fora da cabana seguem o jogador normalmente
+
+##### Consumo Automático
+- Crianças em cabanas consomem comida/água do estoque automaticamente
+- **Taxa reduzida** (~30% da normal) — mais lento que seguir o jogador
+- Consome primeiro quando fome/sede < 50
+- Comida → restaura fome, Bebida → restaura sede
+
+##### UI de Cabana
+- Painel com 3 seções: Estoque, Crianças, Inventário do jogador
+- Botões: Guardar, Retirar, Enviar criança, Chamar criança
+- Status de fome/sede das crianças visível
+
+### 🔧 Alterações Técnicas
+
+#### Novos Arquivos
+| Arquivo | Descrição |
+|---------|-----------|
+| `js/cabin.js` | Classe `CabinUI` - Gerencia interface de cabanas |
+
+#### Arquivos Modificados
+
+##### `js/inventory.js`
+- Adicionado item `CABIN` (tipo building)
+
+##### `js/crafting.js`
+- Adicionada receita de cabana (8 Madeira + 4 Fibra)
+
+##### `js/world.js`
+- `cabinStorage`: Map de estoque por posição
+- `cabinChildren`: Map de crianças por cabana
+- `updateCabinChildren()`: consumo automático de comida/água
+- `renderCabinChildren()`: ícone de crianças na cabana
+- Métodos auxiliares: `cabinKey()`, `getCabinStorage()`, `getCabinChildren()`
+
+##### `js/player.js`
+- `interactWithTile('cabin')`: abre painel de gerenciamento
+- Colocar cabana: interagir com grama tendo cabana no inventário
+
+##### `js/game.js`
+- `CabinUI` instanciado e integrado no game loop
+- Bloqueio de atualização quando cabana está aberta
+
+##### `sw.js`
+- Cache version v2 com cabin.js adicionado
+
+---
+
 ## [1.4.0] - 2026-07-21
 
 ### ✨ Novas Funcionalidades

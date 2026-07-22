@@ -186,6 +186,18 @@ class Player {
             return this.interactWithTile(tile, checkX, checkY, world);
         }
         
+        // Tentar colocar cabana no chão
+        if (tile && !tile.solid && tile.type !== 'water') {
+            if (this.inventory.hasItem('cabin')) {
+                // Remover cabana do inventário
+                const cabinIndex = this.inventory.slots.findIndex(s => s && s.id === 'cabin');
+                this.inventory.removeItem(cabinIndex);
+                // Colocar cabana no mundo
+                world.setTile(checkX, checkY, { ...TILE_TYPES.CABIN });
+                return { success: true, message: 'Cabana construída!' };
+            }
+        }
+        
         // Verificar entidades próximas
         return this.interactWithEntities(world);
     }
@@ -263,8 +275,12 @@ class Player {
                 return { success: false, message: 'Nada para assar!' };
                 
             case 'workbench':
-                // Abrir crafting (TODO)
+                // Abrir crafting
                 return { success: true, message: 'Bancada de trabalho!', crafting: true };
+                
+            case 'cabin':
+                // Gerenciar cabana
+                return { success: true, message: 'Cabana!', cabin: true, cabinX: x, cabinY: y };
                 
             default:
                 return null;

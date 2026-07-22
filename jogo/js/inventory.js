@@ -190,6 +190,15 @@ const ITEMS = {
         type: 'resource',
         stackable: true,
         maxStack: 10
+    },
+    
+    // Construções
+    CABIN: {
+        id: 'cabin',
+        name: '🏠 Cabana',
+        description: 'Abrigo para crianças estorage de itens. Coloque no chão.',
+        type: 'building',
+        stackable: false
     }
 };
 
