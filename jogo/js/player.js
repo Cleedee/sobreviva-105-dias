@@ -189,12 +189,18 @@ class Player {
         // Tentar colocar cabana no chão
         if (tile && !tile.solid && tile.type !== 'water') {
             if (this.inventory.hasItem('cabin')) {
-                // Remover cabana do inventário
                 const cabinIndex = this.inventory.slots.findIndex(s => s && s.id === 'cabin');
                 this.inventory.removeItem(cabinIndex);
-                // Colocar cabana no mundo
                 world.setTile(checkX, checkY, { ...TILE_TYPES.CABIN });
                 return { success: true, message: 'Cabana construída!' };
+            }
+            
+            // Tentar colocar armadilha no chão
+            if (this.inventory.hasItem('trap')) {
+                const trapIndex = this.inventory.slots.findIndex(s => s && s.id === 'trap');
+                this.inventory.removeItem(trapIndex);
+                world.placeTrap(checkX, checkY);
+                return { success: true, message: 'Armadilha armada!' };
             }
         }
         

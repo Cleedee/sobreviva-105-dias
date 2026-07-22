@@ -275,6 +275,9 @@ class Game {
         // Renderizar entidades interativas
         this.world.renderInteractables(this.ctx, this.camera, this.timeManager);
         
+        // Renderizar armadilhas
+        this.world.renderTraps(this.ctx, this.camera);
+        
         // Renderizar inimigos
         this.world.renderEnemies(this.ctx, this.camera, this.timeManager);
         

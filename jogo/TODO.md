@@ -25,7 +25,7 @@ Lista de funcionalidades a implementar e melhorias.
   - [x] Armadilha (2 madeira + 1 pedra)
 
 ### Crianças
-- [ ] Sistema de fome/sede das crianças
+- [x] Sistema de fome/sede das crianças
 - [ ] Alimentar crianças (arrastar comida ou interagir)
 - [ ] Crianças morrem se não cuidar
 - [ ] Opção de devolver para a cela

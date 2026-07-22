@@ -4,6 +4,39 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.6.0] - 2026-07-21
+
+### ✨ Novas Funcionalidades
+
+#### 🪤 Armadilha Funcional
+
+##### Uso
+- **Craftar**: 2 Madeira + 1 Pedra → 1 Armadilha
+- **Colocar**: segure a armadilha no inventário e interaja com grama
+- **Ativação**: inimigos que pisarem na armadilha recebem **30 de dano**
+- Armadilha é **consumida** ao ser ativada (desaparece)
+
+##### Comportamento
+- Verificação contínua de colisão entre inimigos e armadilhas
+- Dano aplicado automaticamente ao inimigo mais próximo
+- Renderização visual: base de madeira com alça e pontas
+
+### 🔧 Alterações Técnicas
+
+##### `js/world.js`
+- Array `activeTraps` para armazenar armadilhas ativas
+- `placeTrap(x, y)`: adiciona armadilha ao mapa
+- `checkTraps()`: verifica colisão inimigos × armadilhas, aplica dano
+- `renderTraps()`: renderiza armadilhas no canvas
+
+##### `js/player.js`
+- Colocar armadilha: interagir com grama segurando item armadilha
+
+##### `js/game.js`
+- `renderTraps()` chamado no game loop de renderização
+
+---
+
 ## [1.5.0] - 2026-07-21
 
 ### ✨ Novas Funcionalidades

@@ -40,6 +40,9 @@ class World {
         // Crianças nas cabanas: "x,y" → [childIds...]
         this.cabinChildren = {};
         
+        // Armadilhas ativas no mapa
+        this.activeTraps = [];
+        
         // Campamento inicial
         this.campX = 0;
         this.campY = 0;
@@ -269,6 +272,9 @@ class World {
             enemy.update(deltaTime, player, this);
         }
         
+        // Verificar armadilhas
+        this.checkTraps();
+        
         // Atualizar crianças
         for (const child of this.children) {
             if (child.following) {
@@ -354,6 +360,70 @@ class World {
                     }
                 }
             }
+        }
+    }
+    
+    // Verificar se inimigos pisaram em armadilhas
+    checkTraps() {
+        for (let i = this.activeTraps.length - 1; i >= 0; i--) {
+            const trap = this.activeTraps[i];
+            
+            for (const enemy of this.enemies) {
+                if (!enemy.isAlive) continue;
+                
+                const dist = MathUtils.distance(
+                    trap.x + 16, trap.y + 16,
+                    enemy.x + enemy.width / 2, enemy.y + enemy.height / 2
+                );
+                
+                if (dist < 24) {
+                    // Armadilha disparou!
+                    enemy.takeDamage(30);
+                    this.activeTraps.splice(i, 1);
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Adicionar armadilha ao mapa
+    placeTrap(tileX, tileY) {
+        this.activeTraps.push({
+            x: tileX * GAME_CONFIG.TILE_SIZE,
+            y: tileY * GAME_CONFIG.TILE_SIZE,
+            tileX: tileX,
+            tileY: tileY
+        });
+    }
+    
+    // Renderizar armadilhas
+    renderTraps(ctx, camera) {
+        for (const trap of this.activeTraps) {
+            const screenX = trap.x - camera.x;
+            const screenY = trap.y - camera.y;
+            
+            if (screenX < -50 || screenX > camera.width + 50 ||
+                screenY < -50 || screenY > camera.height + 50) {
+                continue;
+            }
+            
+            ctx.save();
+            // Base da armadilha
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(screenX + 4, screenY + 20, 24, 8);
+            // Alça
+            ctx.strokeStyle = '#654321';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(screenX + 6, screenY + 20);
+            ctx.lineTo(screenX + 16, screenY + 8);
+            ctx.lineTo(screenX + 26, screenY + 20);
+            ctx.stroke();
+            // Pontas
+            ctx.fillStyle = '#aaa';
+            ctx.fillRect(screenX + 6, screenY + 18, 3, 4);
+            ctx.fillRect(screenX + 23, screenY + 18, 3, 4);
+            ctx.restore();
         }
     }
     
