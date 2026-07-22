@@ -19,10 +19,17 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Botão **❓** no canto superior direito durante o jogo
 - Mostra todos os **controles** do jogo (WASD, E, I, C, SPACE, ESC)
 - **Dicas** de gameplay (como coletar recursos, resgatar crianças, etc.)
-- **Créditos**: versão do jogo, desenvolvedor e idealizador
+- **Créditos**: versão do jogo, desenvolvedor (Cláudio Torcato) e idealizador (Eloá Torcato)
 
-##### Prompt Contextual
-- Prompt de interação agora mostra ação específica do tile próximo:
+#### 🩹 Recuperação de Vida
+- Comidas agora restauram vida ao serem consumidas:
+  - 🍎 Maçã: +5 vida
+  - 🫐 Frutas Silvestres: +3 vida
+  - 🍖 Carne Assada: +15 vida
+- Mensagem na tela mostra a quantidade de vida recuperada
+
+#### 🎯 Prompt Contextual
+- Prompt de interação mostra ação específica do tile próximo:
   - 💧 Água: "Pressione **E** para beber água"
   - 🌳 Árvore: "Pressione **E** para cortar árvore"
   - 🪨 Pedra: "Pressione **E** para minerar pedra"
@@ -44,12 +51,21 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 ##### `js/game.js`
 - `checkNearbyInteractions()`: detecta tipo do tile adjacente e mostra prompt contextual
 
+##### `js/inventory.js`
+- Itens `APPLE`, `BERRY`, `COOKED_MEAT` agora têm propriedade `healthRestore`
+- `useItem()` retorna `healthRestore` ao consumir comida
+
+##### `js/ui.js`
+- `useSelectedItem()` aplica `healthRestore` ao consumir comida
+
 ### 🐛 Correções
 
+- **Jogo trava ao pausar**: botão "Continuar" e botão touch agora chamam `game.togglePause()` ao invés de `ui.togglePause()`
 - Botão "Usar" do inventário funciona para todos os itens (armadilhas, cabanas, cercas, comida, equipamentos)
 - Construções (cerca/cabana) bloqueadas se jogador estiver sobrepondo o tile
 - Barras de fome/sede visíveis (z-index do HUD corrigido)
 - CraftingSystem e CabinUI null-safe (não crasham se HTML incompleto)
+- Service worker atualizado para v3 (cache de `index.html` raiz)
 
 ---
 

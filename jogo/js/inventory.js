@@ -82,39 +82,41 @@ const ITEMS = {
     APPLE: {
         id: 'apple',
         name: '🍎 Maçã',
-        description: 'Restaura 15 de fome.',
+        description: 'Restaura 15 de fome e 5 de vida.',
         type: 'food',
         stackable: true,
         maxStack: 20,
-        hungerRestore: 15
+        hungerRestore: 15,
+        healthRestore: 5
     },
     BERRY: {
         id: 'berry',
         name: '🫐 Frutas Silvestres',
-        description: 'Restaura 10 de fome.',
+        description: 'Restaura 10 de fome e 3 de vida.',
         type: 'food',
         stackable: true,
         maxStack: 30,
-        hungerRestore: 10
+        hungerRestore: 10,
+        healthRestore: 3
     },
     MEAT: {
         id: 'meat',
         name: '🥩 Carne',
-        description: 'Restaura 30 de fome. Melhor assada.',
+        description: 'Restaura 15 de fome. Assada restaura mais.',
         type: 'food',
         stackable: true,
         maxStack: 10,
-        hungerRestore: 15,
-        cookedHungerRestore: 30
+        hungerRestore: 15
     },
     COOKED_MEAT: {
         id: 'cooked_meat',
         name: '🍖 Carne Assada',
-        description: 'Restaura 30 de fome.',
+        description: 'Restaura 30 de fome e 15 de vida.',
         type: 'food',
         stackable: true,
         maxStack: 10,
-        hungerRestore: 30
+        hungerRestore: 30,
+        healthRestore: 15
     },
     
     // Água
@@ -265,7 +267,7 @@ class Inventory {
         switch (item.type) {
             case 'food':
                 this.removeItem(slotIndex);
-                return { type: 'hunger', amount: item.hungerRestore };
+                return { type: 'hunger', amount: item.hungerRestore, healthRestore: item.healthRestore || 0 };
                 
             case 'drink':
                 this.removeItem(slotIndex);

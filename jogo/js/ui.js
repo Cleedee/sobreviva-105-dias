@@ -285,13 +285,19 @@ class GameUI {
         if (item.type === 'food' || item.type === 'drink') {
             const result = inventory.useItem(inventory.selectedSlot);
             if (result) {
+                let msg = '';
                 if (result.type === 'hunger') {
                     game.player.hunger = Math.min(game.player.hunger + result.amount, game.player.maxHunger);
-                    this.showMessage(`Comeu ${item.name}! (+${result.amount} fome)`);
+                    msg = `Comeu ${item.name}! (+${result.amount} fome)`;
                 } else if (result.type === 'thirst') {
                     game.player.thirst = Math.min(game.player.thirst + result.amount, game.player.maxThirst);
-                    this.showMessage(`Bebeu ${item.name}! (+${result.amount} sede)`);
+                    msg = `Bebeu ${item.name}! (+${result.amount} sede)`;
                 }
+                if (result.healthRestore && result.healthRestore > 0) {
+                    game.player.heal(result.healthRestore);
+                    msg += ` (+${result.healthRestore} vida)`;
+                }
+                this.showMessage(msg);
             }
             this.updateInventoryGrid();
             this.onInventorySlotClick(inventory.selectedSlot);
