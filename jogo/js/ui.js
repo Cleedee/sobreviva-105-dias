@@ -60,6 +60,17 @@ class GameUI {
             this.togglePause();
         });
         
+        // Ajuda
+        document.getElementById('help-btn').addEventListener('click', () => {
+            this.toggleHelp();
+        });
+        document.getElementById('close-help-x').addEventListener('click', () => {
+            this.toggleHelp();
+        });
+        document.getElementById('close-help-btn').addEventListener('click', () => {
+            this.toggleHelp();
+        });
+        
         // Slots rápidos
         this.quickSlots.forEach((slot, index) => {
             slot.addEventListener('click', () => {
@@ -405,6 +416,17 @@ class GameUI {
             this.updateTouchControlsVisibility(false);
         } else {
             this.pauseMenu.classList.add('hidden');
+            this.updateTouchControlsVisibility(true);
+        }
+    }
+    
+    toggleHelp() {
+        const helpScreen = document.getElementById('help-screen');
+        if (helpScreen.classList.contains('hidden')) {
+            helpScreen.classList.remove('hidden');
+            this.updateTouchControlsVisibility(false);
+        } else {
+            helpScreen.classList.add('hidden');
             this.updateTouchControlsVisibility(true);
         }
     }

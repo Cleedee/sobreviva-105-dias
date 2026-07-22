@@ -15,6 +15,12 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Restaura **20 de sede** por interação
 - Funciona sem cantil — basta encostar na água
 
+#### ❓ Tela de Ajuda
+- Botão **❓** no canto superior direito durante o jogo
+- Mostra todos os **controles** do jogo (WASD, E, I, C, SPACE, ESC)
+- **Dicas** de gameplay (como coletar recursos, resgatar crianças, etc.)
+- **Créditos**: versão do jogo, desenvolvedor e idealizador
+
 ##### Prompt Contextual
 - Prompt de interação agora mostra ação específica do tile próximo:
   - 💧 Água: "Pressione **E** para beber água"
