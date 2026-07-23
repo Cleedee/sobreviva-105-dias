@@ -105,6 +105,53 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.9.0] - 2026-07-23
+
+### ✨ Novas Funcionalidades
+
+#### 🔑 Sistema de Chaves
+- **6 chaves** geradas aleatoriamente pelo mapa, cada uma correspondendo a uma cela específica
+- Cada chave ocupa **1 slot** no inventário
+- Chaves são visualizadas com **aura dourada pulsante** para facilitar localização
+- Número da cela (#1-6) indicado acima da chave no mapa
+- Para **abrir uma cela**: interagir com ela tendo a chave correspondente no inventário
+- Chave é consumida ao abrir a cela
+
+#### 🗺️ Minimapa Atualizado
+- **Chaves não coletadas** aparecem como pontos dourados no minimapa
+- **Celas trancadas** aparecem como pontos cinza no minimapa
+- Ajuda o jogador a planejar rota de coleta
+
+### 🔧 Alterações Técnicas
+
+#### Arquivos Modificados
+
+##### `js/world.js`
+- Array `this.keys` para armazenar posições das chaves
+- `spawnKeys()`: gera 6 chaves espalhadas pelo mapa (30-60 tiles do centro, longe das celas)
+- `checkKeyPickup(player)`: detecta coleta de chaves pelo jogador
+- `getNearbyKey(player)`: verifica se há chave nas proximidades
+- `renderKeys(ctx, camera)`: renderiza chaves com brilho dourado e número
+- `getKeysState()` e `loadKeysState()`: suporte a save/load das chaves
+
+##### `js/game.js`
+- Chaves renderizadas no loop principal
+- Detecção de tecla E para pegar chaves (prioridade sobre outras interações)
+- Prompt "pressione E para pegar a chave"
+
+##### `js/inventory.js`
+- Case `key` no `useItem()`: mostra info "Abre a cela #X"
+- Botão de usar para chaves mostra "🔑 Info"
+
+##### `js/save.js`
+- Serialização e restauração do estado das chaves
+- Chaves salvas com `tileX`, `tileY`, `prisonNumber` e `collected`
+
+##### `js/ui.js`
+- Minimapa mostra chaves (pontos dourados) e celas trancadas (pontos cinza)
+
+---
+
 ## [1.7.0] - 2026-07-22
 
 ### ✨ Novas Funcionalidades

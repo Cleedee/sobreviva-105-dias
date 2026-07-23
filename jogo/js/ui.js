@@ -220,6 +220,7 @@ class GameUI {
             case 'trap': btn.textContent = '🪤 Colocar'; break;
             case 'cabin': btn.textContent = '🏠 Construir'; break;
             case 'fence': btn.textContent = '🚧 Colocar'; break;
+            case 'key': btn.textContent = '🔑 Info'; break;
             case 'wooden_spear':
             case 'stone_sword':
             case 'axe':
@@ -385,6 +386,33 @@ class GameUI {
             
             if (cx >= 0 && cx < width && cy >= 0 && cy < height) {
                 ctx.fillRect(cx - 2, cy - 2, 4, 4);
+            }
+        }
+        
+        // Renderizar chaves não coletadas (pontos dourados)
+        ctx.fillStyle = '#FFD700';
+        for (const key of (world.keys || [])) {
+            if (key.collected) continue;
+            const kx = centerX + (key.tileX - playerTileX) * scale;
+            const ky = centerY + (key.tileY - playerTileY) * scale;
+            
+            if (kx >= 0 && kx < width && ky >= 0 && ky < height) {
+                ctx.fillRect(kx - 2, ky - 2, 4, 4);
+            }
+        }
+        
+        // Renderizar celas trancadas (pontos cinza)
+        ctx.fillStyle = '#9ca3af';
+        for (let y = 0; y < world.height; y++) {
+            for (let x = 0; x < world.width; x++) {
+                const tile = world.getTile(x, y);
+                if (tile && tile.type === 'prison' && tile.locked) {
+                    const px = centerX + (x - playerTileX) * scale;
+                    const py = centerY + (y - playerTileY) * scale;
+                    if (px >= 0 && px < width && py >= 0 && py < height) {
+                        ctx.fillRect(px - 1, py - 1, 3, 3);
+                    }
+                }
             }
         }
         

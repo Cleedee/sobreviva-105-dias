@@ -188,20 +188,27 @@ class Game {
         
         // Interagir
         if (input.isInteract()) {
-            const result = this.player.interact(this.world);
-            if (result) {
-                this.ui.showMessage(result.message, 2);
-                
-                if (result.rescued) {
-                    this.world.children.push(result.rescued);
-                }
-                
-                if (result.crafting) {
-                    this.crafting.open();
-                }
-                
-                if (result.cabin) {
-                    this.cabinUI.open(result.cabinX, result.cabinY);
+            // Primeiro verificar se há chave próxima
+            const keyResult = this.world.checkKeyPickup(this.player);
+            if (keyResult) {
+                this.ui.showMessage(keyResult.message, 2);
+            } else {
+                // Se não pegou chave, interagir normalmente
+                const result = this.player.interact(this.world);
+                if (result) {
+                    this.ui.showMessage(result.message, 2);
+                    
+                    if (result.rescued) {
+                        this.world.children.push(result.rescued);
+                    }
+                    
+                    if (result.crafting) {
+                        this.crafting.open();
+                    }
+                    
+                    if (result.cabin) {
+                        this.cabinUI.open(result.cabinX, result.cabinY);
+                    }
                 }
             }
         }
@@ -271,6 +278,13 @@ class Game {
             }
         }
         
+        // Verificar chaves próximas
+        const nearbyKey = this.world.getNearbyKey(this.player);
+        if (nearbyKey) {
+            canInteract = true;
+            if (!nearbyType) nearbyType = 'key';
+        }
+        
         if (canInteract) {
             let prompt;
             const isTouch = touchControls && touchControls.isActive();
@@ -304,6 +318,9 @@ class Game {
                 case 'prison':
                     prompt = `${action} para interagir com cela`;
                     break;
+                case 'key':
+                    prompt = `${action} para pegar a chave`;
+                    break;
                 case 'fence':
                     prompt = `${action} para verificar cerca`;
                     break;
@@ -327,6 +344,9 @@ class Game {
         
         // Renderizar mundo
         this.world.render(this.ctx, this.camera, this.timeManager);
+        
+        // Renderizar chaves
+        this.world.renderKeys(this.ctx, this.camera);
         
         // Renderizar entidades interativas
         this.world.renderInteractables(this.ctx, this.camera, this.timeManager);

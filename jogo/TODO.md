@@ -31,6 +31,15 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Opção de devolver para a cela
 - [ ] Diálogos/emoções das crianças
 
+### Sistema de Chaves
+- [x] Chaves espalhadas pelo mapa
+- [x] Cada chave abre uma cela específica
+- [x] Chaves ocupam slot no inventário
+- [x] Visual com brilho dourado pulsante
+- [x] Número da cela indicado na chave
+- [x] Minimapa mostra chaves (dourado) e celas (cinza)
+- [x] Save/Load das chaves
+
 ---
 
 ## 🟡 Prioridade Média (Importante)
@@ -96,7 +105,7 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Colisão mais precisa
 - [ ] Pathfinding para inimigos
 - [ ] Sistema de partículas
-- [ ] Suporte a mobile (touch controls)
+- [x] Suporte a mobile (touch controls)
 
 ---
 
@@ -122,4 +131,4 @@ Lista de funcionalidades a implementar e melhorias.
 
 ---
 
-*Última atualização: 2026-07-21*
+*Última atualização: 2026-07-23*

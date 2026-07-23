@@ -144,6 +144,14 @@ class SaveManager {
             tileX: t.tileX,
             tileY: t.tileY
         }));
+        
+        // Serializar chaves
+        const keys = (world.keys || []).map(k => ({
+            tileX: k.tileX,
+            tileY: k.tileY,
+            prisonNumber: k.prisonNumber,
+            collected: k.collected
+        }));
 
         // Serializar armazenamento de cabanas
         const cabinStorage = {};
@@ -175,6 +183,7 @@ class SaveManager {
             children: children,
             interactables: interactables,
             activeTraps: activeTraps,
+            keys: keys,
             cabinStorage: cabinStorage,
             cabinChildren: cabinChildren,
             fences: { ...world.fences }
@@ -354,6 +363,9 @@ class SaveManager {
             tileX: tData.tileX,
             tileY: tData.tileY
         }));
+        
+        // Restaurar chaves
+        world.loadKeysState(wData.keys);
 
         // Restaurar armazenamento de cabanas
         world.cabinStorage = {};

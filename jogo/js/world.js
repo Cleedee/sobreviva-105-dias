@@ -47,6 +47,9 @@ class World {
         // Armadilhas ativas no mapa
         this.activeTraps = [];
         
+        // Chaves espalhadas pelo mapa: { x, y, prisonNumber, collected }
+        this.keys = [];
+        
         // Campamento inicial
         this.campX = 0;
         this.campY = 0;
@@ -73,6 +76,9 @@ class World {
         
         // Criar celas para as crianças
         this.createPrisons();
+        
+        // Criar chaves espalhadas pelo mapa
+        this.spawnKeys();
         
         // Criar fadas e animais presos
         this.createCaptives();
@@ -178,7 +184,83 @@ class World {
             }
         }
         
+        // Guardar posições das celas para usar na criação das chaves
+        this.prisonPositions = positions;
+        
         return positions;
+    }
+    
+    // Criar chaves espalhadas pelo mapa
+    spawnKeys() {
+        this.keys = [];
+        
+        for (let i = 0; i < GAME_CONFIG.TOTAL_CHILDREN; i++) {
+            const prisonNumber = i + 1;
+            let keyX, keyY;
+            let attempts = 0;
+            let valid = false;
+            
+            while (!valid && attempts < 100) {
+                // Chave fica em posição aleatória, mas não muito perto da cela nem do campamento
+                const angle = Math.random() * Math.PI * 2;
+                const distFromCenter = MathUtils.random(30, 60);
+                
+                keyX = Math.floor(this.campX + Math.cos(angle) * distFromCenter);
+                keyY = Math.floor(this.campY + Math.sin(angle) * distFromCenter);
+                
+                // Verificar se está dentro dos limites
+                if (!this.inBounds(keyX, keyY)) {
+                    attempts++;
+                    continue;
+                }
+                
+                // Verificar se o tile é válido (não sólido, não água)
+                const tile = this.getTile(keyX, keyY);
+                if (tile.solid || tile.type === 'water') {
+                    attempts++;
+                    continue;
+                }
+                
+                // Verificar distância mínima da cela correspondente (pelo menos 20 tiles)
+                if (this.prisonPositions && this.prisonPositions[i]) {
+                    const prison = this.prisonPositions[i];
+                    const distToPrison = MathUtils.distance(keyX, keyY, prison.x, prison.y);
+                    if (distToPrison < 20) {
+                        attempts++;
+                        continue;
+                    }
+                }
+                
+                // Verificar se não está muito perto do campamento (pelo menos 15 tiles)
+                const distToCamp = MathUtils.distance(keyX, keyY, this.campX, this.campY);
+                if (distToCamp < 15) {
+                    attempts++;
+                    continue;
+                }
+                
+                // Verificar se não há outra chave muito perto
+                const tooClose = this.keys.some(k => 
+                    MathUtils.distance(keyX, keyY, k.x / GAME_CONFIG.TILE_SIZE, k.y / GAME_CONFIG.TILE_SIZE) < 10
+                );
+                if (tooClose) {
+                    attempts++;
+                    continue;
+                }
+                
+                valid = true;
+            }
+            
+            if (valid) {
+                this.keys.push({
+                    x: keyX * GAME_CONFIG.TILE_SIZE,
+                    y: keyY * GAME_CONFIG.TILE_SIZE,
+                    tileX: keyX,
+                    tileY: keyY,
+                    prisonNumber: prisonNumber,
+                    collected: false
+                });
+            }
+        }
     }
     
     createChild(number) {
@@ -740,6 +822,29 @@ class World {
                 this.renderInteractable(ctx, camera, obj, timeManager);
             }
         }
+    }
+    
+    // Obter todas as chaves para save
+    getKeysState() {
+        return this.keys.map(k => ({
+            tileX: k.tileX,
+            tileY: k.tileY,
+            prisonNumber: k.prisonNumber,
+            collected: k.collected
+        }));
+    }
+    
+    // Restaurar chaves a partir do save
+    loadKeysState(keysState) {
+        if (!keysState) return;
+        this.keys = keysState.map(k => ({
+            x: k.tileX * GAME_CONFIG.TILE_SIZE,
+            y: k.tileY * GAME_CONFIG.TILE_SIZE,
+            tileX: k.tileX,
+            tileY: k.tileY,
+            prisonNumber: k.prisonNumber,
+            collected: k.collected
+        }));
     }
     
     isChildInCabin(childId) {

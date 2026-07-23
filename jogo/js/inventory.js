@@ -278,6 +278,10 @@ class Inventory {
                 // Equipar (por agora apenas retorna info)
                 return { type: 'equip', item: item };
                 
+            case 'key':
+                // Chave não pode ser usada diretamente
+                return { type: 'key_info', item: item, message: `Abre a cela #${item.prisonNumber}` };
+                
             default:
                 return null;
         }
