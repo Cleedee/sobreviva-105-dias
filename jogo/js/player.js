@@ -404,13 +404,29 @@ class Player {
             case 'right': attackX += this.attackRange; break;
         }
         
-        // Verificar acerto em entidades
+        // Verificar acerto em inimigos
         for (const enemy of world.enemies) {
             const dist = MathUtils.distance(attackX, attackY, enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
             if (dist < 30) {
                 enemy.takeDamage(damage);
                 audioManager.playHit();
                 return { hit: true, target: enemy };
+            }
+        }
+        
+        // Verificar acerto em animais
+        for (const animal of world.animals) {
+            if (!animal.isAlive) continue;
+            const dist = MathUtils.distance(attackX, attackY, animal.x + animal.width / 2, animal.y + animal.height / 2);
+            if (dist < 30) {
+                animal.takeDamage(damage);
+                audioManager.playHit();
+                
+                // Se animal morreu, dropar itens
+                if (!animal.isAlive) {
+                    world.dropAnimalItems(animal, this);
+                }
+                return { hit: true, target: animal };
             }
         }
         

@@ -224,7 +224,8 @@ class GameUI {
             case 'wooden_spear':
             case 'stone_sword':
             case 'axe':
-            case 'pickaxe': btn.textContent = '⚔️ Equipar'; break;
+            case 'pickaxe':
+            case 'bow': btn.textContent = '⚔️ Equipar'; break;
             default: btn.textContent = 'Usar';
         }
     }
@@ -374,6 +375,19 @@ class GameUI {
                 
                 if (ex >= 0 && ex < width && ey >= 0 && ey < height) {
                     ctx.fillRect(ex - 1, ey - 1, 2, 2);
+                }
+            }
+        }
+        
+        // Renderizar animais (pontos marrom)
+        ctx.fillStyle = '#8B4513';
+        for (const animal of (world.animals || [])) {
+            if (animal.isAlive) {
+                const ax = centerX + (animal.x / GAME_CONFIG.TILE_SIZE - playerTileX) * scale;
+                const ay = centerY + (animal.y / GAME_CONFIG.TILE_SIZE - playerTileY) * scale;
+                
+                if (ax >= 0 && ax < width && ay >= 0 && ay < height) {
+                    ctx.fillRect(ax - 1, ay - 1, 2, 2);
                 }
             }
         }

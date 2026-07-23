@@ -29,6 +29,7 @@ class World {
         
         // Entidades
         this.enemies = [];
+        this.animals = []; // Animais caçáveis
         this.children = [];
         this.npcs = [];
         
@@ -85,6 +86,9 @@ class World {
         
         // Spawnar inimigos
         this.spawnEnemies();
+        
+        // Spawnar animais caçáveis
+        this.spawnAnimals();
     }
     
     generateTile(x, y) {
@@ -352,13 +356,73 @@ class World {
         }
     }
     
+    spawnAnimals() {
+        // Coelhos (muitos, rápidos, fáceis de caçar)
+        const rabbitCount = MathUtils.randomInt(15, 25);
+        for (let i = 0; i < rabbitCount; i++) {
+            const pos = this.findEmptySpot();
+            if (pos) {
+                this.animals.push(new Rabbit(
+                    pos.x * GAME_CONFIG.TILE_SIZE,
+                    pos.y * GAME_CONFIG.TILE_SIZE
+                ));
+            }
+        }
+        
+        // Veados (médios, mais rápidos)
+        const deerCount = MathUtils.randomInt(8, 12);
+        for (let i = 0; i < deerCount; i++) {
+            const pos = this.findEmptySpot();
+            if (pos) {
+                this.animals.push(new Deer(
+                    pos.x * GAME_CONFIG.TILE_SIZE,
+                    pos.y * GAME_CONFIG.TILE_SIZE
+                ));
+            }
+        }
+        
+        // Javalis (poucos, fortes, mais carne)
+        const boarCount = MathUtils.randomInt(5, 8);
+        for (let i = 0; i < boarCount; i++) {
+            const pos = this.findEmptySpot();
+            if (pos) {
+                this.animals.push(new Boar(
+                    pos.x * GAME_CONFIG.TILE_SIZE,
+                    pos.y * GAME_CONFIG.TILE_SIZE
+                ));
+            }
+        }
+    }
+    
+    // Dropar itens de animal morto
+    dropAnimalItems(animal, player) {
+        for (const drop of animal.drops) {
+            const chance = drop.chance || 1;
+            if (Math.random() <= chance) {
+                const qty = MathUtils.randomInt(drop.minQty, drop.maxQty);
+                const added = player.inventory.addItem(drop.item, qty);
+                if (added) {
+                    // Mostrar mensagem
+                    if (game && game.ui) {
+                        game.ui.showMessage(`+${qty} ${drop.item.name}`, 1.5);
+                    }
+                }
+            }
+        }
+    }
+    
     update(deltaTime, timeManager, player) {
         // Atualizar inimigos
         for (const enemy of this.enemies) {
             enemy.update(deltaTime, player, this);
         }
         
-        // Verificar armadilhas
+        // Atualizar animais
+        for (const animal of this.animals) {
+            animal.update(deltaTime, player, this);
+        }
+        
+        // Verificar armadilhas (capturam animais também)
         this.checkTraps();
         
         // Atualizar crianças
@@ -449,11 +513,13 @@ class World {
         }
     }
     
-    // Verificar se inimigos pisaram em armadilhas
+    // Verificar se inimigos ou animais pisaram em armadilhas
     checkTraps() {
         for (let i = this.activeTraps.length - 1; i >= 0; i--) {
             const trap = this.activeTraps[i];
+            let trapUsed = false;
             
+            // Verificar inimigos
             for (const enemy of this.enemies) {
                 if (!enemy.isAlive) continue;
                 
@@ -463,12 +529,37 @@ class World {
                 );
                 
                 if (dist < 24) {
-                    // Armadilha disparou!
                     enemy.takeDamage(30);
                     audioManager.playTrap();
-                    this.activeTraps.splice(i, 1);
+                    trapUsed = true;
                     break;
                 }
+            }
+            
+            // Verificar animais (se armadilha não foi usada ainda)
+            if (!trapUsed) {
+                for (const animal of this.animals) {
+                    if (!animal.isAlive) continue;
+                    
+                    const dist = MathUtils.distance(
+                        trap.x + 16, trap.y + 16,
+                        animal.x + animal.width / 2, animal.y + animal.height / 2
+                    );
+                    
+                    if (dist < 24) {
+                        // Animal capturado! Matar e dropar itens
+                        animal.health = 0;
+                        animal.die();
+                        this.dropAnimalItems(animal, game.player);
+                        audioManager.playTrap();
+                        trapUsed = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (trapUsed) {
+                this.activeTraps.splice(i, 1);
             }
         }
     }
@@ -800,6 +891,15 @@ class World {
         for (const enemy of this.enemies) {
             if (enemy.isAlive) {
                 enemy.render(ctx, camera, timeManager);
+            }
+        }
+    }
+    
+    // Renderizar animais caçáveis
+    renderAnimals(ctx, camera, timeManager) {
+        for (const animal of this.animals) {
+            if (animal.isAlive) {
+                animal.render(ctx, camera, timeManager);
             }
         }
     }
@@ -1266,6 +1366,423 @@ class Bear extends Enemy {
             ctx.fillRect(screenX + 4, screenY - 8, 28, 4);
             ctx.fillStyle = '#ef4444';
             ctx.fillRect(screenX + 4, screenY - 8, (this.health / this.maxHealth) * 28, 4);
+        }
+        
+        ctx.restore();
+    }
+}
+
+/**
+ * Animal - Classe base para animais caçáveis
+ * Diferente de Enemy: foge do jogador, não ataca
+ */
+class Animal {
+    constructor(x, y, type) {
+        this.x = x;
+        this.y = y;
+        this.width = 20;
+        this.height = 20;
+        this.type = type;
+        
+        this.health = 30;
+        this.maxHealth = 30;
+        this.speed = 2;
+        this.isAlive = true;
+        
+        this.state = 'idle'; // idle, wander, flee
+        this.targetX = x;
+        this.targetY = y;
+        this.stateTimer = 0;
+        
+        this.fleeRange = 120; // distância para começar a fugir
+        this.wanderRange = 80; // distância máxima de vagar
+        this.spawnX = x; // posição inicial (para não fugir muito)
+        this.spawnY = y;
+        
+        // Drops ao morrer
+        this.drops = [];
+    }
+    
+    update(deltaTime, player, world) {
+        if (!this.isAlive) return;
+        
+        // Distância ao jogador
+        const distToPlayer = MathUtils.distance(
+            this.x + this.width / 2, this.y + this.height / 2,
+            player.x + player.width / 2, player.y + player.height / 2
+        );
+        
+        // Mudar estado baseado na distância
+        if (distToPlayer < this.fleeRange) {
+            this.state = 'flee';
+        } else if (this.state === 'flee' && distToPlayer > this.fleeRange * 2) {
+            this.state = 'wander';
+        } else if (this.state === 'idle') {
+            this.state = 'wander';
+        }
+        
+        // Comportamento baseado no estado
+        switch (this.state) {
+            case 'idle':
+                this.updateIdle(deltaTime);
+                break;
+            case 'wander':
+                this.updateWander(deltaTime, world);
+                break;
+            case 'flee':
+                this.updateFlee(deltaTime, player, world);
+                break;
+        }
+    }
+    
+    updateIdle(deltaTime) {
+        this.stateTimer += deltaTime;
+        if (this.stateTimer > 2) {
+            this.state = 'wander';
+            this.stateTimer = 0;
+            // Escolher ponto aleatório para vagar
+            this.targetX = this.spawnX + MathUtils.random(-this.wanderRange, this.wanderRange);
+            this.targetY = this.spawnY + MathUtils.random(-this.wanderRange, this.wanderRange);
+        }
+    }
+    
+    updateWander(deltaTime, world) {
+        const dist = MathUtils.distance(this.x, this.y, this.targetX, this.targetY);
+        
+        if (dist < 10) {
+            this.state = 'idle';
+            this.stateTimer = 0;
+            return;
+        }
+        
+        const angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+        const newX = this.x + Math.cos(angle) * this.speed * 0.3;
+        const newY = this.y + Math.sin(angle) * this.speed * 0.3;
+        
+        // Verificar colisão
+        if (!this.checkCollision(newX, newY, world)) {
+            this.x = newX;
+            this.y = newY;
+        } else {
+            this.state = 'idle';
+            this.stateTimer = 0;
+        }
+    }
+    
+    updateFlee(deltaTime, player, world) {
+        // Fugir na direção oposta ao jogador
+        const angle = Math.atan2(
+            this.y + this.height / 2 - (player.y + player.height / 2),
+            this.x + this.width / 2 - (player.x + player.width / 2)
+        );
+        
+        const newX = this.x + Math.cos(angle) * this.speed * 1.5;
+        const newY = this.y + Math.sin(angle) * this.speed * 1.5;
+        
+        // Verificar colisão
+        if (!this.checkCollision(newX, newY, world)) {
+            this.x = newX;
+            this.y = newY;
+        } else {
+            // Tentar fugir em outro ângulo
+            const altAngle = angle + Math.PI / 4;
+            const altX = this.x + Math.cos(altAngle) * this.speed * 1.5;
+            const altY = this.y + Math.sin(altAngle) * this.speed * 1.5;
+            if (!this.checkCollision(altX, altY, world)) {
+                this.x = altX;
+                this.y = altY;
+            }
+        }
+    }
+    
+    checkCollision(x, y, world) {
+        const tileX = Math.floor((x + this.width / 2) / GAME_CONFIG.TILE_SIZE);
+        const tileY = Math.floor((y + this.height / 2) / GAME_CONFIG.TILE_SIZE);
+        const tile = world.getTile(tileX, tileY);
+        return tile && tile.solid;
+    }
+    
+    takeDamage(amount) {
+        this.health -= amount;
+        if (this.health <= 0) {
+            this.die();
+        } else {
+            audioManager.playHit();
+            this.state = 'flee'; // Reagir ao dano
+        }
+    }
+    
+    die() {
+        this.isAlive = false;
+        audioManager.playEnemyDeath();
+        // Drops são processados pelo World
+    }
+    
+    render(ctx, camera, timeManager) {
+        const screenX = this.x - camera.x;
+        const screenY = this.y - camera.y;
+        
+        if (screenX < -50 || screenX > camera.width + 50 ||
+            screenY < -50 || screenY > camera.height + 50) {
+            return;
+        }
+        
+        ctx.save();
+        
+        // Sombra
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.ellipse(screenX + this.width / 2, screenY + this.height, 8, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Corpo (será sobrescrito por classes filhas)
+        ctx.fillStyle = '#8B7355';
+        ctx.beginPath();
+        ctx.ellipse(screenX + this.width / 2, screenY + this.height / 2, 8, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Barra de vida (se machucado)
+        if (this.health < this.maxHealth) {
+            ctx.fillStyle = '#333';
+            ctx.fillRect(screenX + 2, screenY - 6, 16, 3);
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(screenX + 2, screenY - 6, (this.health / this.maxHealth) * 16, 3);
+        }
+        
+        ctx.restore();
+    }
+}
+
+/**
+ * Rabbit - Coelho (presas fáceis, rápidos)
+ */
+class Rabbit extends Animal {
+    constructor(x, y) {
+        super(x, y, 'rabbit');
+        this.health = 20;
+        this.maxHealth = 20;
+        this.speed = 3; // Muito rápido
+        this.width = 16;
+        this.height = 16;
+        this.fleeRange = 100;
+        this.wanderRange = 60;
+        
+        this.drops = [
+            { item: ITEMS.RABBIT_MEAT, minQty: 1, maxQty: 2 },
+            { item: ITEMS.RABBIT_PELT, minQty: 1, maxQty: 1, chance: 0.7 }
+        ];
+    }
+    
+    render(ctx, camera, timeManager) {
+        const screenX = this.x - camera.x;
+        const screenY = this.y - camera.y;
+        
+        if (screenX < -50 || screenX > camera.width + 50 ||
+            screenY < -50 || screenY > camera.height + 50) {
+            return;
+        }
+        
+        ctx.save();
+        
+        // Sombra
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.ellipse(screenX + 8, screenY + 16, 6, 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Corpo
+        ctx.fillStyle = '#d4a574';
+        ctx.beginPath();
+        ctx.ellipse(screenX + 8, screenY + 10, 6, 5, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Cabeça
+        ctx.fillStyle = '#c9956a';
+        ctx.beginPath();
+        ctx.arc(screenX + 12, screenY + 8, 4, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Orelhas
+        ctx.fillStyle = '#d4a574';
+        ctx.beginPath();
+        ctx.ellipse(screenX + 10, screenY + 2, 2, 5, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(screenX + 14, screenY + 2, 2, 5, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Olho
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(screenX + 13, screenY + 7, 1, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Barra de vida (se machucado)
+        if (this.health < this.maxHealth) {
+            ctx.fillStyle = '#333';
+            ctx.fillRect(screenX + 2, screenY - 4, 12, 2);
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(screenX + 2, screenY - 4, (this.health / this.maxHealth) * 12, 2);
+        }
+        
+        ctx.restore();
+    }
+}
+
+/**
+ * Deer - Veado (médio, rápido)
+ */
+class Deer extends Animal {
+    constructor(x, y) {
+        super(x, y, 'deer');
+        this.health = 40;
+        this.maxHealth = 40;
+        this.speed = 2.5;
+        this.width = 24;
+        this.height = 24;
+        this.fleeRange = 130;
+        this.wanderRange = 100;
+        
+        this.drops = [
+            { item: ITEMS.DEER_MEAT, minQty: 2, maxQty: 4 },
+            { item: ITEMS.DEER_PELT, minQty: 1, maxQty: 2, chance: 0.8 }
+        ];
+    }
+    
+    render(ctx, camera, timeManager) {
+        const screenX = this.x - camera.x;
+        const screenY = this.y - camera.y;
+        
+        if (screenX < -50 || screenX > camera.width + 50 ||
+            screenY < -50 || screenY > camera.height + 50) {
+            return;
+        }
+        
+        ctx.save();
+        
+        // Sombra
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.ellipse(screenX + 12, screenY + 24, 10, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Corpo
+        ctx.fillStyle = '#c9875a';
+        ctx.beginPath();
+        ctx.ellipse(screenX + 12, screenY + 14, 10, 8, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Cabeça
+        ctx.fillStyle = '#b87a4a';
+        ctx.beginPath();
+        ctx.arc(screenX + 20, screenY + 8, 5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Chifres
+        ctx.strokeStyle = '#8B4513';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(screenX + 18, screenY + 4);
+        ctx.lineTo(screenX + 14, screenY - 2);
+        ctx.lineTo(screenX + 12, screenY + 2);
+        ctx.moveTo(screenX + 22, screenY + 4);
+        ctx.lineTo(screenX + 26, screenY - 2);
+        ctx.lineTo(screenX + 28, screenY + 2);
+        ctx.stroke();
+        
+        // Olho
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(screenX + 22, screenY + 7, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Barra de vida (se machucado)
+        if (this.health < this.maxHealth) {
+            ctx.fillStyle = '#333';
+            ctx.fillRect(screenX + 4, screenY - 4, 16, 3);
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(screenX + 4, screenY - 4, (this.health / this.maxHealth) * 16, 3);
+        }
+        
+        ctx.restore();
+    }
+}
+
+/**
+ * Boar - Javali (forte, agressivo quando acuado)
+ */
+class Boar extends Animal {
+    constructor(x, y) {
+        super(x, y, 'boar');
+        this.health = 60;
+        this.maxHealth = 60;
+        this.speed = 2;
+        this.width = 28;
+        this.height = 28;
+        this.fleeRange = 100;
+        this.wanderRange = 80;
+        
+        this.drops = [
+            { item: ITEMS.BOAR_MEAT, minQty: 3, maxQty: 5 },
+            { item: ITEMS.BOAR_PELT, minQty: 1, maxQty: 2, chance: 0.9 }
+        ];
+    }
+    
+    render(ctx, camera, timeManager) {
+        const screenX = this.x - camera.x;
+        const screenY = this.y - camera.y;
+        
+        if (screenX < -50 || screenX > camera.width + 50 ||
+            screenY < -50 || screenY > camera.height + 50) {
+            return;
+        }
+        
+        ctx.save();
+        
+        // Sombra
+        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.beginPath();
+        ctx.ellipse(screenX + 14, screenY + 28, 12, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Corpo
+        ctx.fillStyle = '#5a4a3a';
+        ctx.beginPath();
+        ctx.ellipse(screenX + 14, screenY + 16, 12, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Cabeça
+        ctx.fillStyle = '#4a3a2a';
+        ctx.beginPath();
+        ctx.arc(screenX + 24, screenY + 12, 6, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Focinho
+        ctx.fillStyle = '#3a2a1a';
+        ctx.beginPath();
+        ctx.arc(screenX + 28, screenY + 14, 3, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Presas
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.moveTo(screenX + 26, screenY + 16);
+        ctx.lineTo(screenX + 24, screenY + 20);
+        ctx.lineTo(screenX + 28, screenY + 16);
+        ctx.fill();
+        
+        // Olho
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(screenX + 24, screenY + 10, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Barra de vida (se machucado)
+        if (this.health < this.maxHealth) {
+            ctx.fillStyle = '#333';
+            ctx.fillRect(screenX + 4, screenY - 4, 20, 3);
+            ctx.fillStyle = '#22c55e';
+            ctx.fillRect(screenX + 4, screenY - 4, (this.health / this.maxHealth) * 20, 3);
         }
         
         ctx.restore();

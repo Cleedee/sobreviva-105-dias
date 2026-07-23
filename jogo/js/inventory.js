@@ -51,6 +51,69 @@ const ITEMS = {
         damage: 30,
         durability: 80
     },
+    BOW: {
+        id: 'bow',
+        name: '🏹 Arco e Flecha',
+        description: 'Arma à distância para caça.',
+        type: 'weapon',
+        stackable: false,
+        damage: 25,
+        durability: 60,
+        range: 150 // alcance especial
+    },
+    
+    // Recursos de Caça
+    RABBIT_MEAT: {
+        id: 'rabbit_meat',
+        name: '🐇 Carne de Coelho',
+        description: 'Restaura 10 de fome. Leve e rápido de cozinhar.',
+        type: 'food',
+        stackable: true,
+        maxStack: 20,
+        hungerRestore: 10
+    },
+    DEER_MEAT: {
+        id: 'deer_meat',
+        name: '🦌 Carne de Veado',
+        description: 'Restaura 20 de fome. Saborosa.',
+        type: 'food',
+        stackable: true,
+        maxStack: 15,
+        hungerRestore: 20
+    },
+    BOAR_MEAT: {
+        id: 'boar_meat',
+        name: '🐗 Carne de Javali',
+        description: 'Restaura 25 de fome. Pesada mas nutritiva.',
+        type: 'food',
+        stackable: true,
+        maxStack: 10,
+        hungerRestore: 25
+    },
+    RABBIT_PELT: {
+        id: 'rabbit_pelt',
+        name: '🐇 Pele de Coelho',
+        description: 'Pele macia. Pode ser usada para artesanato.',
+        type: 'resource',
+        stackable: true,
+        maxStack: 30
+    },
+    DEER_PELT: {
+        id: 'deer_pelt',
+        name: '🦌 Pele de Veado',
+        description: 'Pele resistente. Útil para roupas.',
+        type: 'resource',
+        stackable: true,
+        maxStack: 20
+    },
+    BOAR_PELT: {
+        id: 'boar_pelt',
+        name: '🐗 Pele de Javali',
+        description: 'Pele grossa. Excelente para proteção.',
+        type: 'resource',
+        stackable: true,
+        maxStack: 15
+    },
     
     // Recursos
     WOOD: {

@@ -7,12 +7,23 @@ const RECIPES = [
     {
         id: 'wooden_spear',
         name: '🗡️ Lança de Madeira',
-        description: 'Uma arma básica de defesa.',
+        description: 'Uma arma básica de defesa e caça.',
         result: { ...ITEMS.WOODEN_SPEAR },
         resultQuantity: 1,
         ingredients: [
             { itemId: 'wood', quantity: 2, name: '🪵 Madeira' },
             { itemId: 'fiber', quantity: 1, name: '🌿 Fibra' }
+        ]
+    },
+    {
+        id: 'bow',
+        name: '🏹 Arco e Flecha',
+        description: 'Arma à distância para caça e defesa.',
+        result: { ...ITEMS.BOW },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'wood', quantity: 3, name: '🪵 Madeira' },
+            { itemId: 'fiber', quantity: 2, name: '🌿 Fibra' }
         ]
     },
     {

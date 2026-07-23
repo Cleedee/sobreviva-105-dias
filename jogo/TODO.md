@@ -36,14 +36,14 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Diálogos/emoções das crianças
 
 ### Sistema de Caça
-- [ ] Animais para caçar (coelhos, veados, javalis)
-- [ ] Ferramentas de caça:
-  - [ ] Arco e Flecha (novo - craftar: 3 madeira + 2 fibra)
-  - [ ] Lança (já existe - eficiente para caça)
-  - [ ] Armadilha (já existe - captura animal vivo)
-  - [ ] Mãos vazias (difícil, menos recompensa)
-- [ ] Drop de carne e peles ao caçar
-- [ ] Animais fogem do jogador
+- [x] Animais para caçar (coelhos, veados, javalis)
+- [x] Ferramentas de caça:
+  - [x] Arco e Flecha (novo - craftar: 3 madeira + 2 fibra)
+  - [x] Lança (já existe - eficiente para caça)
+  - [x] Armadilha (já existe - captura animal vivo)
+  - [x] Mãos vazias (difícil, menos recompensa)
+- [x] Drop de carne e peles ao caçar
+- [x] Animais fogem do jogador
 - [ ] Som de caça e coleta
 
 ### Fogueira

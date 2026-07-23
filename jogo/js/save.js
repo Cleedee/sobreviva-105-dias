@@ -114,7 +114,23 @@ class SaveManager {
                 stateTimer: e.stateTimer,
                 attackCooldown: e.attackCooldown
             }));
-
+        
+        // Serializar animais (só vivos)
+        const animals = (world.animals || [])
+            .filter(a => a.isAlive)
+            .map(a => ({
+                type: a.type,
+                x: a.x,
+                y: a.y,
+                spawnX: a.spawnX,
+                spawnY: a.spawnY,
+                health: a.health,
+                state: a.state,
+                targetX: a.targetX,
+                targetY: a.targetY,
+                stateTimer: a.stateTimer
+            }));
+        
         // Serializar crianças
         const children = world.children.map(c => ({
             id: c.id,
@@ -180,6 +196,7 @@ class SaveManager {
             campY: world.campY,
             tiles: tiles,
             enemies: enemies,
+            animals: animals,
             children: children,
             interactables: interactables,
             activeTraps: activeTraps,
@@ -312,7 +329,29 @@ class SaveManager {
             enemy.attackCooldown = eData.attackCooldown;
             return enemy;
         });
-
+        
+        // Restaurar animais
+        world.animals = (wData.animals || []).map(aData => {
+            let animal;
+            if (aData.type === 'rabbit') {
+                animal = new Rabbit(aData.x, aData.y);
+            } else if (aData.type === 'deer') {
+                animal = new Deer(aData.x, aData.y);
+            } else if (aData.type === 'boar') {
+                animal = new Boar(aData.x, aData.y);
+            } else {
+                animal = new Rabbit(aData.x, aData.y); // fallback
+            }
+            animal.spawnX = aData.spawnX;
+            animal.spawnY = aData.spawnY;
+            animal.health = aData.health;
+            animal.state = aData.state;
+            animal.targetX = aData.targetX;
+            animal.targetY = aData.targetY;
+            animal.stateTimer = aData.stateTimer;
+            return animal;
+        });
+        
         // Restaurar crianças
         world.children = wData.children.map(cData => {
             const child = {

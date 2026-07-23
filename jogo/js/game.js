@@ -357,6 +357,9 @@ class Game {
         // Renderizar inimigos
         this.world.renderEnemies(this.ctx, this.camera, this.timeManager);
         
+        // Renderizar animais
+        this.world.renderAnimals(this.ctx, this.camera, this.timeManager);
+        
         // Renderizar jogador
         this.player.render(this.ctx, this.camera);
         
