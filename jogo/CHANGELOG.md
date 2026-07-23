@@ -216,6 +216,20 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Botão "Equipar" para armaduras
 - Suporte a equipar Luvas, Casaco e Armadura
 
+##### `sw.js`
+- Cache version bump: `sobreviva-105-v5` → `sobreviva-105-v6`
+
+### 🐛 Correções de Bugs
+
+#### Crash ao pressionar Espaço (ataque)
+- `player.js`: `attackX` e `attackY` declaradas como `const` mas reatribuídas no `switch` → alterado para `let`
+- Causava `TypeError: Assignment to constant variable` no `Player.attack()`, quebrando o game loop
+
+#### Game loop quebrava ao iniciar (mapa verde + atalhos sem resposta)
+- `world.js`: métodos `renderKeys()`, `checkKeyPickup()` e `getNearbyKey()` eram chamados em `game.js` mas não existiam
+- Causava `TypeError` no `render()`, impedindo o `requestAnimationFrame` de prosseguir
+- Adicionados os 3 métodos faltantes
+
 ---
 
 ## [1.7.0] - 2026-07-22

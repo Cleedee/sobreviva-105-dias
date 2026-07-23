@@ -605,6 +605,80 @@ class World {
         }
     }
     
+    // Renderizar chaves não coletadas
+    renderKeys(ctx, camera) {
+        for (const key of this.keys) {
+            if (key.collected) continue;
+            
+            const screenX = key.x - camera.x;
+            const screenY = key.y - camera.y;
+            
+            if (screenX < -50 || screenX > camera.width + 50 ||
+                screenY < -50 || screenY > camera.height + 50) {
+                continue;
+            }
+            
+            ctx.save();
+            // Brilho da chave
+            const pulse = Math.sin(Date.now() / 300) * 0.3 + 0.7;
+            ctx.fillStyle = `rgba(255, 215, 0, ${pulse})`;
+            ctx.beginPath();
+            ctx.arc(screenX + 8, screenY + 8, 6, 0, Math.PI * 2);
+            ctx.fill();
+            // Símbolo da chave
+            ctx.fillStyle = '#FFD700';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🔑', screenX + 8, screenY + 12);
+            ctx.restore();
+        }
+    }
+    
+    // Verificar se jogador está perto de uma chave para pegar
+    checkKeyPickup(player) {
+        for (const key of this.keys) {
+            if (key.collected) continue;
+            
+            const dist = MathUtils.distance(
+                player.x + player.width / 2, player.y + player.height / 2,
+                key.x + 8, key.y + 8
+            );
+            
+            if (dist < 24) {
+                key.collected = true;
+                const keyItem = {
+                    id: `key_${key.prisonNumber}`,
+                    name: `🔑 Chave #${key.prisonNumber}`,
+                    description: `Abre a cela #${key.prisonNumber}`,
+                    type: 'key',
+                    stackable: false,
+                    prisonNumber: key.prisonNumber
+                };
+                player.inventory.addItem(keyItem, 1);
+                audioManager.playCollect();
+                return { message: `Pegou a Chave #${key.prisonNumber}!` };
+            }
+        }
+        return null;
+    }
+    
+    // Verificar se há chave próxima (para prompt de interação)
+    getNearbyKey(player) {
+        for (const key of this.keys) {
+            if (key.collected) continue;
+            
+            const dist = MathUtils.distance(
+                player.x + player.width / 2, player.y + player.height / 2,
+                key.x + 8, key.y + 8
+            );
+            
+            if (dist < 32) {
+                return key;
+            }
+        }
+        return null;
+    }
+    
     getTile(x, y) {
         if (!this.inBounds(x, y)) return null;
         return this.tiles[y][x];

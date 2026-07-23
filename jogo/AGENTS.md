@@ -154,7 +154,8 @@ input → update(dt) → render() → input.clearFrame()
 
 ## 🐛 Bugs Conhecidos
 
-- Nenhum registrado ainda
+- `const` vs `let` em `Player.attack()`: variáveis `attackX`/`attackY` causam `TypeError` se re-declaradas como `const`
+- Métodos do sistema de chaves (`renderKeys`, `checkKeyPickup`, `getNearbyKey`) precisam existir em `world.js` ou o game loop quebra
 
 ---
 
@@ -166,4 +167,4 @@ input → update(dt) → render() → input.clearFrame()
 
 ---
 
-*Última atualização: 2026-07-21*
+*Última atualização: 2026-07-23*

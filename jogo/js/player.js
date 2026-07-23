@@ -449,8 +449,8 @@ class Player {
         }
         
         // Calcular área de ataque
-        const attackX = this.x + this.width / 2;
-        const attackY = this.y + this.height / 2;
+        let attackX = this.x + this.width / 2;
+        let attackY = this.y + this.height / 2;
         
         switch (this.facing) {
             case 'up': attackY -= this.attackRange; break;
