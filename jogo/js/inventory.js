@@ -264,6 +264,57 @@ const ITEMS = {
         description: 'Abrigo para crianças estorage de itens. Coloque no chão.',
         type: 'building',
         stackable: false
+    },
+    
+    // Roupas de Pele
+    RABBIT_GLOVES: {
+        id: 'rabbit_gloves',
+        name: '🧤 Luvas de Coelho',
+        description: 'Aumentam loot ao coletar recursos.',
+        type: 'armor',
+        stackable: false,
+        slot: 'hands',
+        bonusLoot: 1 // +1 item ao coletar
+    },
+    DEER_COAT: {
+        id: 'deer_coat',
+        name: '🧥 Casaco de Veado',
+        description: 'Protege contra o frio da noite.',
+        type: 'armor',
+        stackable: false,
+        slot: 'body',
+        coldResist: 0.5 // 50% menos dano de frio
+    },
+    BOAR_ARMOR: {
+        id: 'boar_armor',
+        name: '🛡️ Armadura de Javali',
+        description: 'Reduz dano recebido de inimigos.',
+        type: 'armor',
+        stackable: false,
+        slot: 'body',
+        damageReduction: 0.3 // 30% menos dano
+    },
+    
+    // Armadilha Melhorada
+    IMPROVED_TRAP: {
+        id: 'improved_trap',
+        name: '🪤 Armadilha Melhorada',
+        description: 'Captura animais maiores. Mais durável.',
+        type: 'building',
+        stackable: true,
+        maxStack: 5,
+        damage: 50, // mais dano
+        catchRate: 1.5 // 50% mais chance de capturar
+    },
+    
+    // Cama de Pele
+    FUR_BED: {
+        id: 'fur_bed',
+        name: '🛏️ Cama de Pele',
+        description: 'Coloque na cabana para crianças dormirem melhor.',
+        type: 'furniture',
+        stackable: false,
+        comfortBonus: 0.5 // +50% regen durante sono
     }
 };
 

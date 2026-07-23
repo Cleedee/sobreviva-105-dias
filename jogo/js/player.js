@@ -44,6 +44,15 @@ class Player {
         // Combate
         this.attackCooldown = 0;
         this.attackRange = 40;
+        
+        // Armadura/Equipamento
+        this.equippedArmor = {
+            hands: null, // luvas
+            body: null   // casaco/armadura
+        };
+        
+        // Frio da noite
+        this.coldDamageTimer = 0;
     }
     
     update(deltaTime, world) {
@@ -93,6 +102,29 @@ class Player {
         // Atualizar cooldown de ataque
         if (this.attackCooldown > 0) {
             this.attackCooldown -= deltaTime;
+        }
+        
+        // Dano de frio durante a noite
+        if (game && game.timeManager && game.timeManager.isNight) {
+            this.coldDamageTimer += deltaTime;
+            if (this.coldDamageTimer >= 10) { // a cada 10 segundos
+                this.coldDamageTimer = 0;
+                let coldDamage = 2; // dano base de frio
+                
+                // Reduzir dano com casaco de veado
+                if (this.equippedArmor.body && this.equippedArmor.body.coldResist) {
+                    coldDamage *= (1 - this.equippedArmor.body.coldResist);
+                }
+                
+                if (coldDamage > 0) {
+                    this.takeDamage(coldDamage);
+                    if (game && game.ui) {
+                        game.ui.showMessage('🥶 Está frio...', 1.5);
+                    }
+                }
+            }
+        } else {
+            this.coldDamageTimer = 0;
         }
         
         // Ações
@@ -222,9 +254,11 @@ class Player {
                 // Cortar árvore
                 if (this.hasTool('axe')) {
                     world.removeTile(x, y);
-                    this.inventory.addItem(ITEMS.WOOD, MathUtils.randomInt(2, 4));
+                    const bonus = this.getLootBonus();
+                    const amount = MathUtils.randomInt(2, 4) + bonus;
+                    this.inventory.addItem(ITEMS.WOOD, amount);
                     audioManager.playCollect();
-                    return { success: true, message: 'Cortou madeira!' };
+                    return { success: true, message: bonus > 0 ? `Cortou ${amount} madeira! (+${bonus} bônus)` : 'Cortou madeira!' };
                 }
                 return { success: false, message: 'Precisa de um machado!' };
                 
@@ -232,28 +266,36 @@ class Player {
                 // Minerar pedra
                 if (this.hasTool('pickaxe')) {
                     world.removeTile(x, y);
-                    this.inventory.addItem(ITEMS.STONE, MathUtils.randomInt(2, 4));
+                    const bonus = this.getLootBonus();
+                    const amount = MathUtils.randomInt(2, 4) + bonus;
+                    this.inventory.addItem(ITEMS.STONE, amount);
                     audioManager.playCollect();
-                    return { success: true, message: 'Coletou pedra!' };
+                    return { success: true, message: bonus > 0 ? `Coletou ${amount} pedra! (+${bonus} bônus)` : 'Coletou pedra!' };
                 }
                 // Mão livre - coleta menos pedra
                 world.removeTile(x, y);
-                this.inventory.addItem(ITEMS.STONE, 1);
+                const bonusHand = this.getLootBonus();
+                const amountHand = 1 + bonusHand;
+                this.inventory.addItem(ITEMS.STONE, amountHand);
                 audioManager.playCollect();
-                return { success: true, message: 'Recolheu 1 pedra com as mãos.' };
+                return { success: true, message: bonusHand > 0 ? `Recolheu ${amountHand} pedra! (+${bonusHand} bônus)` : 'Recolheu 1 pedra com as mãos.' };
                 
             case 'berry_bush':
                 // Colher frutas
-                this.inventory.addItem(ITEMS.BERRY, MathUtils.randomInt(2, 5));
+                const bonusBerry = this.getLootBonus();
+                const amountBerry = MathUtils.randomInt(2, 5) + bonusBerry;
+                this.inventory.addItem(ITEMS.BERRY, amountBerry);
                 audioManager.playCollect();
-                return { success: true, message: 'Coletou frutas!' };
+                return { success: true, message: bonusBerry > 0 ? `Coletou ${amountBerry} frutas! (+${bonusBerry} bônus)` : 'Coletou frutas!' };
                 
             case 'tall_grass':
                 // Cortar grama alta para fibra
                 world.removeTile(x, y);
-                this.inventory.addItem(ITEMS.FIBER, MathUtils.randomInt(1, 3));
+                const bonusFiber = this.getLootBonus();
+                const amountFiber = MathUtils.randomInt(1, 3) + bonusFiber;
+                this.inventory.addItem(ITEMS.FIBER, amountFiber);
                 audioManager.playCollect();
-                return { success: true, message: 'Coletou fibra!' };
+                return { success: true, message: bonusFiber > 0 ? `Coletou ${amountFiber} fibra! (+${bonusFiber} bônus)` : 'Coletou fibra!' };
                 
             case 'water':
                 // Beber água do lago e/ou encher cantil
@@ -352,9 +394,22 @@ class Player {
         return item && item.type === 'tool' && item.id.includes(toolType);
     }
     
+    // Obter bônus de loot das luvas
+    getLootBonus() {
+        if (this.equippedArmor.hands && this.equippedArmor.hands.bonusLoot) {
+            return this.equippedArmor.hands.bonusLoot;
+        }
+        return 0;
+    }
+    
     // Receber dano
     takeDamage(amount) {
         if (this.isInvincible) return;
+        
+        // Reduzir dano com armadura de javali
+        if (this.equippedArmor.body && this.equippedArmor.body.damageReduction) {
+            amount *= (1 - this.equippedArmor.body.damageReduction);
+        }
         
         this.health -= amount;
         this.health = MathUtils.clamp(this.health, 0, this.maxHealth);

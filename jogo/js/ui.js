@@ -225,7 +225,10 @@ class GameUI {
             case 'stone_sword':
             case 'axe':
             case 'pickaxe':
-            case 'bow': btn.textContent = '⚔️ Equipar'; break;
+            case 'bow':
+            case 'rabbit_gloves':
+            case 'deer_coat':
+            case 'boar_armor': btn.textContent = '⚔️ Equipar'; break;
             default: btn.textContent = 'Usar';
         }
     }
@@ -317,6 +320,24 @@ class GameUI {
             game.player.equippedItem = item;
             this.showMessage(`Equipou ${item.name}!`);
             this.updateInventoryGrid();
+            return;
+        }
+        
+        // Armaduras: equipar
+        if (item.type === 'armor') {
+            game.player.equippedArmor[item.slot] = item;
+            inventory.removeItem(inventory.selectedSlot);
+            this.showMessage(`Equipou ${item.name}!`);
+            this.updateInventoryGrid();
+            this.onInventorySlotClick(inventory.selectedSlot);
+            return;
+        }
+        
+        // Móveis: colocar na cabana
+        if (item.type === 'furniture') {
+            this.toggleInventory();
+            this.showMessage(`${item.name} será colocado na próxima cabana interagida.`);
+            // TODO: Implementar colocação de móveis
             return;
         }
         

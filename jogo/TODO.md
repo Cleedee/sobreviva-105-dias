@@ -95,6 +95,15 @@ Lista de funcionalidades a implementar e melhorias.
   - [ ] Escudo mágico (proteção)
 - [ ] Animais com diferentes dádivas
 
+### Usos das Peles
+- [x] Luvas de Coelho (+1 loot ao coletar)
+- [x] Casaco de Veado (50% resistência ao frio)
+- [x] Armadura de Javali (30% redução de dano)
+- [x] Armadilha Melhorada (mais dano, captura maiores)
+- [x] Cama de Pele (melhor regen nas cabanas)
+- [x] Carnes assadas específicas (coelho, veado, javali)
+- [x] Sistema de frio durante a noite
+
 ---
 
 ## 🟢 Prioridade Baixa (Polimento)

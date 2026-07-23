@@ -74,6 +74,10 @@ class SaveManager {
             invincibleTimer: player.invincibleTimer,
             attackCooldown: player.attackCooldown,
             equippedItemId: player.equippedItem ? player.equippedItem.id : null,
+            equippedArmor: {
+                hands: player.equippedArmor.hands ? player.equippedArmor.hands.id : null,
+                body: player.equippedArmor.body ? player.equippedArmor.body.id : null
+            },
             inventory: {
                 size: player.inventory.size,
                 selectedSlot: player.inventory.selectedSlot,
@@ -265,7 +269,17 @@ class SaveManager {
         } else {
             player.equippedItem = null;
         }
-
+        
+        // Restaurar armadura
+        if (pData.equippedArmor) {
+            if (pData.equippedArmor.hands && ITEMS[pData.equippedArmor.hands.toUpperCase()]) {
+                player.equippedArmor.hands = { ...ITEMS[pData.equippedArmor.hands.toUpperCase()] };
+            }
+            if (pData.equippedArmor.body && ITEMS[pData.equippedArmor.body.toUpperCase()]) {
+                player.equippedArmor.body = { ...ITEMS[pData.equippedArmor.body.toUpperCase()] };
+            }
+        }
+        
         // Restaurar inventário
         player.inventory.size = pData.inventory.size;
         player.inventory.selectedSlot = pData.inventory.selectedSlot;

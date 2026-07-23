@@ -94,6 +94,124 @@ const RECIPES = [
         requiresNear: 'campfire'
     },
     {
+        id: 'cooked_rabbit',
+        name: '🍖 Carne de Coelho Assada',
+        description: 'Restaura 20 de fome e 5 de vida.',
+        result: {
+            id: 'cooked_rabbit',
+            name: '🍖 Carne de Coelho Assada',
+            description: 'Restaura 20 de fome e 5 de vida.',
+            type: 'food',
+            stackable: true,
+            maxStack: 20,
+            hungerRestore: 20,
+            healthRestore: 5
+        },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'rabbit_meat', quantity: 1, name: '🐇 Carne de Coelho' }
+        ],
+        requiresNear: 'campfire'
+    },
+    {
+        id: 'cooked_deer',
+        name: '🍖 Carne de Veado Assada',
+        description: 'Restaura 35 de fome e 10 de vida.',
+        result: {
+            id: 'cooked_deer',
+            name: '🍖 Carne de Veado Assada',
+            description: 'Restaura 35 de fome e 10 de vida.',
+            type: 'food',
+            stackable: true,
+            maxStack: 15,
+            hungerRestore: 35,
+            healthRestore: 10
+        },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'deer_meat', quantity: 1, name: '🦌 Carne de Veado' }
+        ],
+        requiresNear: 'campfire'
+    },
+    {
+        id: 'cooked_boar',
+        name: '🍖 Carne de Javali Assada',
+        description: 'Restaura 40 de fome e 15 de vida.',
+        result: {
+            id: 'cooked_boar',
+            name: '🍖 Carne de Javali Assada',
+            description: 'Restaura 40 de fome e 15 de vida.',
+            type: 'food',
+            stackable: true,
+            maxStack: 10,
+            hungerRestore: 40,
+            healthRestore: 15
+        },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'boar_meat', quantity: 1, name: '🐗 Carne de Javali' }
+        ],
+        requiresNear: 'campfire'
+    },
+    {
+        id: 'rabbit_gloves',
+        name: '🧤 Luvas de Coelho',
+        description: '+1 item ao coletar recursos.',
+        result: { ...ITEMS.RABBIT_GLOVES },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'rabbit_pelt', quantity: 2, name: '🐇 Pele de Coelho' },
+            { itemId: 'fiber', quantity: 1, name: '🌿 Fibra' }
+        ]
+    },
+    {
+        id: 'deer_coat',
+        name: '🧥 Casaco de Veado',
+        description: 'Protege 50% contra frio da noite.',
+        result: { ...ITEMS.DEER_COAT },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'deer_pelt', quantity: 2, name: '🦌 Pele de Veado' },
+            { itemId: 'fiber', quantity: 3, name: '🌿 Fibra' }
+        ]
+    },
+    {
+        id: 'boar_armor',
+        name: '🛡️ Armadura de Javali',
+        description: 'Reduz 30% do dano recebido.',
+        result: { ...ITEMS.BOAR_ARMOR },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'boar_pelt', quantity: 3, name: '🐗 Pele de Javali' },
+            { itemId: 'fiber', quantity: 4, name: '🌿 Fibra' },
+            { itemId: 'wood', quantity: 2, name: '🪵 Madeira' }
+        ]
+    },
+    {
+        id: 'improved_trap',
+        name: '🪤 Armadilha Melhorada',
+        description: 'Captura animais maiores. Mais dano.',
+        result: { ...ITEMS.IMPROVED_TRAP },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'wood', quantity: 3, name: '🪵 Madeira' },
+            { itemId: 'stone', quantity: 2, name: '🪨 Pedra' },
+            { itemId: 'rabbit_pelt', quantity: 1, name: '🐇 Pele de Coelho' }
+        ]
+    },
+    {
+        id: 'fur_bed',
+        name: '🛏️ Cama de Pele',
+        description: 'Crianças recuperam mais na cabana.',
+        result: { ...ITEMS.FUR_BED },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'deer_pelt', quantity: 2, name: '🦌 Pele de Veado' },
+            { itemId: 'wood', quantity: 4, name: '🪵 Madeira' },
+            { itemId: 'fiber', quantity: 2, name: '🌿 Fibra' }
+        ]
+    },
+    {
         id: 'cabin',
         name: '🏠 Cabana',
         description: 'Abrigo para crianças e armazenamento de itens.',
