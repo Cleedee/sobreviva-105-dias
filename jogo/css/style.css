@@ -71,6 +71,27 @@ body {
     transform: scale(1.05);
 }
 
+#load-btn {
+    padding: 0.8rem 2.5rem;
+    font-size: 1.2rem;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 2rem;
+}
+
+#load-btn:hover {
+    background-color: #2563eb;
+    transform: scale(1.05);
+}
+
+#load-btn.hidden {
+    display: none;
+}
+
 .controls-info {
     background-color: rgba(0,0,0,0.3);
     padding: 1rem 2rem;

@@ -52,10 +52,10 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Animações de personagens
 
 ### Save/Load
-- [ ] Salvar estado do jogo no localStorage
-- [ ] Carregar jogo salvo
+- [x] Salvar estado do jogo no localStorage
+- [x] Carregar jogo salvo
 - [ ] Menu de slots de save
-- [ ] Auto-save a cada X dias
+- [x] Auto-save a cada 5 minutos
 
 ### Fadas e Animais
 - [ ] Implementar dádivas das fadas

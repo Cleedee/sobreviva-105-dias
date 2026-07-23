@@ -217,6 +217,9 @@ class Game {
         
         // Atualizar UI
         this.ui.update(this.player, this.timeManager);
+        
+        // Auto-save
+        saveManager.updateAutoSave(dt, this);
     }
     
     updateCamera() {
@@ -366,6 +369,22 @@ class Game {
     togglePause() {
         this.paused = !this.paused;
         this.ui.togglePause();
+    }
+    
+    saveGame() {
+        if (saveManager.save(this)) {
+            this.ui.showMessage('💾 Jogo salvo!');
+        } else {
+            this.ui.showMessage('Erro ao salvar!');
+        }
+    }
+    
+    loadGame() {
+        if (saveManager.load(this)) {
+            this.ui.showMessage('💾 Jogo carregado!');
+            return true;
+        }
+        return false;
     }
     
     gameOver(reason) {

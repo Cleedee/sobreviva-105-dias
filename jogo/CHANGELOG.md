@@ -32,6 +32,15 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Clique no toast recarrega a página com a nova versão
 - Toast some automaticamente após 8 segundos
 
+#### 💾 Save/Load do Jogo
+- Novo módulo `js/save.js` com `SaveManager`
+- **Salvar**: botão "Salvar" no menu de pausa (ESC)
+- **Carregar**: botão "Continuar Jogo" na tela inicial (aparece se houver save)
+- **Auto-save**: a cada 5 minutos automaticamente
+- **Sair**: botão "Sair" no menu de pausa limpa o save e recarrega
+- Save inclui: posição, vida, fome, sede, inventário, mundo, cercas, cabanas, armadilhas, inimigos, crianças, tempo
+- Save armazenado em `localStorage` com versionamento (`1.8.0`)
+
 #### 🚧 Cercas com Durabilidade
 - Cercas agora têm **100 de durabilidade** (vida)
 - **Inimigos bloqueados** por cercas: lobos, ursos (e o Monstro Bugado quando implementado)

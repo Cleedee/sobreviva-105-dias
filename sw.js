@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sobreviva-105-v4';
+const CACHE_NAME = 'sobreviva-105-v5';
 const ASSETS = [
     './',
     './index.html',
@@ -12,6 +12,7 @@ const ASSETS = [
     './jogo/js/inventory.js',
     './jogo/js/crafting.js',
     './jogo/js/cabin.js',
+    './jogo/js/save.js',
     './jogo/js/player.js',
     './jogo/js/world.js',
     './jogo/js/ui.js',

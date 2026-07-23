@@ -26,22 +26,49 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Botão de iniciar
     const startBtn = document.getElementById('start-btn');
-    console.log('Botão encontrado:', startBtn);
+    const loadBtn = document.getElementById('load-btn');
+    
+    // Mostrar botão de carregar se houver save
+    if (saveManager.hasSave()) {
+        loadBtn.classList.remove('hidden');
+        const info = saveManager.getSaveInfo();
+        if (info) loadBtn.textContent = `Continuar (Dia ${info.day})`;
+    }
     
     startBtn.addEventListener('click', () => {
-        console.log('Botão clicado! Iniciando jogo...');
         try {
             game.start();
-            console.log('Jogo iniciado!');
-            
-            // Ativar controles touch após iniciar
             if (touchControls && touchControls.isActive()) {
                 touchControls.updateVisibility(true);
-                console.log('Controles touch ativados!');
             }
         } catch (e) {
             console.error('Erro ao iniciar jogo:', e);
         }
+    });
+    
+    // Botão de carregar jogo salvo
+    loadBtn.addEventListener('click', () => {
+        try {
+            game.start();
+            if (game.loadGame()) {
+                if (touchControls && touchControls.isActive()) {
+                    touchControls.updateVisibility(true);
+                }
+            }
+        } catch (e) {
+            console.error('Erro ao carregar jogo:', e);
+        }
+    });
+    
+    // Botão de salvar no pause menu
+    document.getElementById('save-btn').addEventListener('click', () => {
+        game.saveGame();
+    });
+    
+    // Botão de sair no pause menu
+    document.getElementById('quit-btn').addEventListener('click', () => {
+        saveManager.deleteSave();
+        location.reload();
     });
     
     // Suporte a touch para iniciar o jogo
