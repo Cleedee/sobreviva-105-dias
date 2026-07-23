@@ -241,7 +241,7 @@ class GameUI {
         if (!item) return;
         
         // Itens de construção: fechar inventário e colocar no mundo
-        if (item.id === 'trap' || item.id === 'cabin' || item.id === 'fence') {
+        if (item.id === 'trap' || item.id === 'cabin' || item.id === 'fence' || item.id === 'campfire_item') {
             this.toggleInventory();
             
             // Calcular tile na facing direction
@@ -283,6 +283,10 @@ class GameUI {
                     game.world.placeFence(checkX, checkY, 100);
                     audioManager.playPlace();
                     this.showMessage('Cerca colocada!');
+                } else if (item.id === 'campfire_item') {
+                    game.world.setTile(checkX, checkY, { ...TILE_TYPES.CAMPFIRE });
+                    audioManager.playPlace();
+                    this.showMessage('Fogueira acesa!');
                 }
             } else {
                 this.showMessage('Não é possível colocar aqui!');
