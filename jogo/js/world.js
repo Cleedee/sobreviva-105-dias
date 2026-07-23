@@ -39,6 +39,10 @@ class World {
         this.cabinStorage = {};
         // Crianças nas cabanas: "x,y" → [childIds...]
         this.cabinChildren = {};
+        // Durabilidade das cercas: "x,y" → { durability, maxDurability }
+        this.fences = {};
+        // Dano por segundo que inimigos causam nas cercas
+        this.fenceDamageRate = 15;
         
         // Armadilhas ativas no mapa
         this.activeTraps = [];
@@ -470,6 +474,43 @@ class World {
         return this.cabinChildren[key];
     }
     
+    // === Cercas ===
+    
+    // Criar cerca com durabilidade
+    placeFence(x, y, maxDurability) {
+        const key = this.cabinKey(x, y);
+        this.fences[key] = { durability: maxDurability, maxDurability: maxDurability };
+    }
+    
+    // Obter durabilidade de uma cerca
+    getFence(x, y) {
+        return this.fences[this.cabinKey(x, y)] || null;
+    }
+    
+    // Causar dano numa cerca, retorna true se destruída
+    damageFence(x, y, amount) {
+        const key = this.cabinKey(x, y);
+        const fence = this.fences[key];
+        if (!fence) return false;
+        
+        fence.durability -= amount;
+        if (fence.durability <= 0) {
+            // Destruir cerca
+            delete this.fences[key];
+            this.setTile(x, y, { id: 1, name: 'Grama', solid: false, color: TILE_COLORS.GRASS_1 });
+            audioManager.playHit();
+            return true; // destruída
+        }
+        return false; // ainda de pé
+    }
+    
+    // Obter porcentagem de durabilidade da cerca (0-1)
+    getFenceHealthPercent(x, y) {
+        const fence = this.getFence(x, y);
+        if (!fence) return 0;
+        return fence.durability / fence.maxDurability;
+    }
+    
     // Renderizar tiles visíveis
     render(ctx, camera, timeManager) {
         const startX = Math.max(0, Math.floor(camera.x / GAME_CONFIG.TILE_SIZE));
@@ -630,16 +671,42 @@ class World {
                 break;
 
             case 'fence':
-                // Cercas - postes e barras horizontais
-                ctx.fillStyle = '#8B6914';
+                // Cercas - postes e barras horizontais com dano visual
+                const fenceHealth = this.getFenceHealthPercent(tileX, tileY);
+                
+                // Base marrom, fica mais clara com dano
+                const r = Math.floor(139 + (1 - fenceHealth) * 60);
+                const g = Math.floor(105 + (1 - fenceHealth) * 40);
+                const b = Math.floor(20 + (1 - fenceHealth) * 20);
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                
                 // Postes verticais
                 ctx.fillRect(x + 2, y + 6, 3, 22);
                 ctx.fillRect(x + 14, y + 6, 3, 22);
                 ctx.fillRect(x + 27, y + 6, 3, 22);
                 // Barras horizontais
-                ctx.fillStyle = '#A0782C';
+                const barColor = `rgb(${Math.min(255, r + 20)},${Math.min(255, g + 20)},${Math.min(255, b + 20)})`;
+                ctx.fillStyle = barColor;
                 ctx.fillRect(x + 2, y + 10, 28, 3);
                 ctx.fillRect(x + 2, y + 20, 28, 3);
+                
+                // Rachaduras quando dano > 50%
+                if (fenceHealth < 0.5) {
+                    ctx.strokeStyle = '#4a3000';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(x + 8, y + 6);
+                    ctx.lineTo(x + 10, y + 16);
+                    ctx.lineTo(x + 6, y + 28);
+                    ctx.stroke();
+                }
+                if (fenceHealth < 0.25) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + 22, y + 8);
+                    ctx.lineTo(x + 20, y + 18);
+                    ctx.lineTo(x + 24, y + 28);
+                    ctx.stroke();
+                }
                 break;
         }
         
@@ -838,7 +905,7 @@ class Enemy {
                 this.updatePatrol(deltaTime, world);
                 break;
             case 'chase':
-                this.updateChase(deltaTime, player);
+                this.updateChase(deltaTime, player, world);
                 break;
             case 'attack':
                 this.updateAttack(deltaTime, player);
@@ -879,14 +946,28 @@ class Enemy {
         }
     }
     
-    updateChase(deltaTime, player) {
+    updateChase(deltaTime, player, world) {
         const angle = Math.atan2(
             player.y + player.height / 2 - (this.y + this.height / 2),
             player.x + player.width / 2 - (this.x + this.width / 2)
         );
         
-        this.x += Math.cos(angle) * this.speed;
-        this.y += Math.sin(angle) * this.speed;
+        const newX = this.x + Math.cos(angle) * this.speed;
+        const newY = this.y + Math.sin(angle) * this.speed;
+        
+        // Verificar colisão com tiles sólidos
+        if (!this.checkCollision(newX, newY, world)) {
+            this.x = newX;
+            this.y = newY;
+        } else if (world) {
+            // Verificar se há cerca bloqueando e causar dano
+            const tileX = Math.floor((newX + this.width / 2) / GAME_CONFIG.TILE_SIZE);
+            const tileY = Math.floor((newY + this.height / 2) / GAME_CONFIG.TILE_SIZE);
+            const tile = world.getTile(tileX, tileY);
+            if (tile && tile.type === 'fence') {
+                this.attackFence(tileX, tileY, world);
+            }
+        }
     }
     
     updateAttack(deltaTime, player) {
@@ -901,6 +982,19 @@ class Enemy {
         const tileY = Math.floor((y + this.height / 2) / GAME_CONFIG.TILE_SIZE);
         const tile = world.getTile(tileX, tileY);
         return tile && tile.solid;
+    }
+    
+    // Causar dano numa cerca ao colidir durante perseguição
+    attackFence(tileX, tileY, world) {
+        if (this.attackCooldown > 0) return;
+        
+        const destroyed = world.damageFence(tileX, tileY, world.fenceDamageRate);
+        this.attackCooldown = 0.5; // intervalo entre ataques à cerca
+        
+        if (!destroyed) {
+            // Rugir ao atacar a cerca
+            audioManager.playWolfGrowl();
+        }
     }
     
     takeDamage(amount) {

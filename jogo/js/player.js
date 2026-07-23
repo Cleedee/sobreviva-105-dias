@@ -309,6 +309,20 @@ class Player {
                 // Gerenciar cabana
                 return { success: true, message: 'Cabana!', cabin: true, cabinX: x, cabinY: y };
                 
+            case 'fence':
+                // Verificar estado da cerca
+                const fence = game.world.getFence(x, y);
+                if (fence) {
+                    const pct = Math.round((fence.durability / fence.maxDurability) * 100);
+                    let status = '';
+                    if (pct > 75) status = '🟢 Íntegra';
+                    else if (pct > 50) status = '🟡 Levemente danificada';
+                    else if (pct > 25) status = '🟠 Muito danificada';
+                    else status = '🔴 Quase destruída';
+                    return { success: true, message: `Cerca: ${status} (${pct}%)` };
+                }
+                return { success: false, message: 'Nenhuma cerca aqui' };
+                
             default:
                 return null;
         }

@@ -301,6 +301,9 @@ class Game {
                 case 'prison':
                     prompt = `${action} para interagir com cela`;
                     break;
+                case 'fence':
+                    prompt = `${action} para verificar cerca`;
+                    break;
                 case 'child':
                     prompt = `${action} para resgatar criança`;
                     break;

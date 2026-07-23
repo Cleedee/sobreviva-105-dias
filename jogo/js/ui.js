@@ -273,8 +273,9 @@ class GameUI {
                 } else if (item.id === 'fence') {
                     game.world.setTile(checkX, checkY, {
                         id: 43, name: 'Cerca', solid: true, color: '#8B6914',
-                        interactable: false, type: 'fence'
+                        interactable: true, type: 'fence'
                     });
+                    game.world.placeFence(checkX, checkY, 100);
                     audioManager.playPlace();
                     this.showMessage('Cerca colocada!');
                 }

@@ -32,6 +32,20 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Clique no toast recarrega a página com a nova versão
 - Toast some automaticamente após 8 segundos
 
+#### 🚧 Cercas com Durabilidade
+- Cercas agora têm **100 de durabilidade** (vida)
+- **Inimigos bloqueados** por cercas: lobos, ursos (e o Monstro Bugado quando implementado)
+- Inimigos em **perseguição** atacam a cerca automaticamente, causando **15 de dano** por ataque
+- Ao ser colocada: prompt "Pressione **E** para verificar cerca"
+- Ao interagir: mostra status com código de cores:
+  - 🟢 Íntegra (>75%)
+  - 🟡 Levemente danificada (>50%)
+  - 🟠 Muito danificada (>25%)
+  - 🔴 Quase destruída (<25%)
+- **Rachaduras visuais** aparecem no tile quando dano > 50%
+- **Cor da cerca escurece** conforme perde durabilidade
+- Cercas destruídas viram grama automaticamente
+
 ### 🔧 Alterações Técnicas
 
 ##### `js/audio.js` (novo)
@@ -62,6 +76,23 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 ##### `js/main.js`
 - Listener para `message` do service worker
 - Função `showUpdateToast()` com toast animado e auto-dismiss
+
+##### `js/world.js`
+- `World.fences`: mapa de durabilidade das cercas ("x,y" → { durability, maxDurability })
+- `World.placeFence()`, `getFence()`, `damageFence()`, `getFenceHealthPercent()`
+- `Enemy.updateChase()`: verifica colisão com cercas e causa dano
+- `Enemy.attackFence()`: dano à cerca com cooldown
+- `World.renderTileDetails()`: cerca mostra rachaduras e escurece com dano
+
+##### `js/player.js`
+- `interactWithTile()` case `fence`: mostra status da cerca (durabilidade %)
+
+##### `js/ui.js`
+- Colocar cerca agora registra durabilidade via `world.placeFence()`
+- Tile da cerca agora é `interactable: true`
+
+##### `js/game.js`
+- Prompt contextual para cercas: "Pressione **E** para verificar cerca"
 
 ---
 
