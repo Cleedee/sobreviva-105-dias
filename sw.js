@@ -30,7 +30,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Ativar - limpar caches antigos
+// Ativar - limpar caches antigos e notificar cliente
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((keys) => {
@@ -38,7 +38,15 @@ self.addEventListener('activate', (event) => {
                 keys.filter((key) => key !== CACHE_NAME)
                     .map((key) => caches.delete(key))
             );
-        }).then(() => self.clients.claim())
+        }).then(() => {
+            // Notificar todas as abas abertas sobre nova versão
+            self.clients.matchAll().then((clients) => {
+                clients.forEach((client) => {
+                    client.postMessage({ type: 'NEW_VERSION', version: CACHE_NAME });
+                });
+            });
+            return self.clients.claim();
+        })
     );
 });
 

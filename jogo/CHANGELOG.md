@@ -26,6 +26,12 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Volume configurável (0-1)
 - Pausa/resume automático com o jogo
 
+#### 🔄 Notificação de Atualização PWA
+- Service worker detecta nova versão e notifica todas as abas abertas
+- Toast animado na parte inferior da tela: "Nova versão disponível! Clique para atualizar"
+- Clique no toast recarrega a página com a nova versão
+- Toast some automaticamente após 8 segundos
+
 ### 🔧 Alterações Técnicas
 
 ##### `js/audio.js` (novo)
@@ -48,6 +54,14 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ##### `index.html` (ambos)
 - Script `js/audio.js` adicionado (após `input.js`, antes de `touch.js`)
+
+##### `sw.js`
+- v3 → v4: adicionado `audio.js` ao cache
+- `activate` agora envia `postMessage` com `NEW_VERSION` para todas as abas
+
+##### `js/main.js`
+- Listener para `message` do service worker
+- Função `showUpdateToast()` com toast animado e auto-dismiss
 
 ---
 
