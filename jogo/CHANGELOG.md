@@ -4,6 +4,53 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.8.0] - 2026-07-22
+
+### ✨ Novas Funcionalidades
+
+#### 🔊 Sistema de Áudio
+- Novo módulo `js/audio.js` com `AudioManager` usando **Web Audio API**
+- Geração procedural de sons (sem arquivos externos):
+  - **Movimento**: passos ao caminhar
+  - **Combate**: ataque, acerto, dano recebido
+  - **Coleta**: coletar itens (fibra, pedra, comida)
+  - **Consumo**: comer, beber
+  - **Crafting**: som ao fabricar item
+  - **Construção**: som ao colocar armadilha/cabana/cerca
+  - **UI**: abrir/fechar inventário
+  - **Inimigos**: rugido (lobo), roar (urso), morte
+  - **Ambiente**: ruído de vento, pássaros (dia), corujas (noite)
+  - **Música**: tema dia/noturno com notas procedurais
+  - **Eventos**: lua cheia, início da noite/dia
+  - **Fim de jogo**: game over e vitória
+- Volume configurável (0-1)
+- Pausa/resume automático com o jogo
+
+### 🔧 Alterações Técnicas
+
+##### `js/audio.js` (novo)
+- `AudioManager` com `init()`, `resume()`, `playXxx()` para cada som
+- `startMusic(isNight)`, `stopMusic()`, `startAmbientLoop()`, `stopAmbientLoop()`
+
+##### `js/game.js`
+- `audioManager.init()` no construtor do Game
+- `audioManager.resume()`, `startMusic()`, `startAmbientLoop()` no `start()`
+- Sons em `setupCallbacks()`: lua cheia, noite, dia
+- Sons em `gameOver()` e `win()`
+
+##### `js/ui.js`
+- Sons em `toggleInventory()`: open/close
+- Sons em `useSelectedItem()`: eat/drink
+- Sons em colocação de armadilha/cabana/cerca
+
+##### `js/crafting.js`
+- Som de craft ao fabricar item com sucesso
+
+##### `index.html` (ambos)
+- Script `js/audio.js` adicionado (após `input.js`, antes de `touch.js`)
+
+---
+
 ## [1.7.0] - 2026-07-22
 
 ### ✨ Novas Funcionalidades
@@ -28,7 +75,7 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
   - 🍖 Carne Assada: +15 vida
 - Mensagem na tela mostra a quantidade de vida recuperada
 
-#### 🎯 Prompt Contextual
+#### 🎮 Prompt Contextual
 - Prompt de interação mostra ação específica do tile próximo:
   - 💧 Água: "Pressione **E** para beber água"
   - 🌳 Árvore: "Pressione **E** para cortar árvore"

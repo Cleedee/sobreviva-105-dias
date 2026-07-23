@@ -191,6 +191,7 @@ class CraftingSystem {
 
         // Adicionar resultado
         player.inventory.addItem(recipe.result, recipe.resultQuantity);
+        audioManager.playCraft();
 
         return true;
     }

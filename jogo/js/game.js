@@ -8,6 +8,9 @@ class Game {
         this.canvas = document.getElementById('game-canvas');
         this.ctx = this.canvas.getContext('2d');
         
+        // Áudio
+        audioManager.init();
+        
         // Estado do jogo
         this.running = false;
         this.paused = false;
@@ -54,17 +57,22 @@ class Game {
         // Lua cheia
         this.timeManager.on('onFullMoon', () => {
             this.ui.showMessage('🌕 Lua Cheia! O Monstro Bugado está caçando...', 4);
+            audioManager.playFullMoon();
             // TODO: Spawnar Monstro Bugado
         });
         
         // Início da noite
         this.timeManager.on('onNightStart', () => {
             this.ui.showMessage('🌙 A noite caiu... Tome cuidado!', 2);
+            audioManager.playNightStart();
+            audioManager.startMusic(true);
         });
         
         // Início do dia
         this.timeManager.on('onDayStart', () => {
             this.ui.showMessage(`☀️ Dia ${this.timeManager.day} começou!`, 2);
+            audioManager.playDayStart();
+            audioManager.startMusic(false);
             
             // Verificar vitória
             if (this.timeManager.day > 105 && this.player.children.length >= GAME_CONFIG.TOTAL_CHILDREN) {
@@ -102,6 +110,11 @@ class Game {
         // Garantir que canvas está visível
         this.canvas.style.display = 'block';
         this.canvas.style.zIndex = '1';
+        
+        // Iniciar áudio
+        audioManager.resume();
+        audioManager.startMusic(false);
+        audioManager.startAmbientLoop();
         
         // Iniciar jogo
         console.log('Iniciando game loop...');
@@ -354,6 +367,9 @@ class Game {
     
     gameOver(reason) {
         this.running = false;
+        audioManager.playGameOver();
+        audioManager.stopMusic();
+        audioManager.stopAmbientLoop();
         
         // Mostrar tela de game over
         const overlay = document.createElement('div');
@@ -398,6 +414,9 @@ class Game {
     
     win() {
         this.running = false;
+        audioManager.playVictory();
+        audioManager.stopMusic();
+        audioManager.stopAmbientLoop();
         
         const overlay = document.createElement('div');
         overlay.style.cssText = `

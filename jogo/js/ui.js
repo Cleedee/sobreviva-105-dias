@@ -264,15 +264,18 @@ class GameUI {
                 
                 if (item.id === 'trap') {
                     game.world.placeTrap(checkX, checkY);
+                    audioManager.playPlace();
                     this.showMessage('Armadilha armada!');
                 } else if (item.id === 'cabin') {
                     game.world.setTile(checkX, checkY, { ...TILE_TYPES.CABIN });
+                    audioManager.playPlace();
                     this.showMessage('Cabana construída!');
                 } else if (item.id === 'fence') {
                     game.world.setTile(checkX, checkY, {
                         id: 43, name: 'Cerca', solid: true, color: '#8B6914',
                         interactable: false, type: 'fence'
                     });
+                    audioManager.playPlace();
                     this.showMessage('Cerca colocada!');
                 }
             } else {
@@ -289,9 +292,11 @@ class GameUI {
                 if (result.type === 'hunger') {
                     game.player.hunger = Math.min(game.player.hunger + result.amount, game.player.maxHunger);
                     msg = `Comeu ${item.name}! (+${result.amount} fome)`;
+                    audioManager.playEat();
                 } else if (result.type === 'thirst') {
                     game.player.thirst = Math.min(game.player.thirst + result.amount, game.player.maxThirst);
                     msg = `Bebeu ${item.name}! (+${result.amount} sede)`;
+                    audioManager.playDrink();
                 }
                 if (result.healthRestore && result.healthRestore > 0) {
                     game.player.heal(result.healthRestore);
@@ -408,9 +413,11 @@ class GameUI {
             this.inventoryScreen.classList.remove('hidden');
             this.updateInventoryGrid();
             this.updateTouchControlsVisibility(false);
+            audioManager.playOpen();
         } else {
             this.inventoryScreen.classList.add('hidden');
             this.updateTouchControlsVisibility(true);
+            audioManager.playClose();
         }
     }
     

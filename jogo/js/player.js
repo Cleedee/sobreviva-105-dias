@@ -67,6 +67,11 @@ class Player {
         // Aplicar movimento com colisão
         this.moveWithCollision(world, deltaTime);
         
+        // Sons de passos
+        if (this.isMoving) {
+            audioManager.playFootstep();
+        }
+        
         // Manter dentro do mapa
         this.x = MathUtils.clamp(this.x, 0, world.width * GAME_CONFIG.TILE_SIZE - this.width);
         this.y = MathUtils.clamp(this.y, 0, world.height * GAME_CONFIG.TILE_SIZE - this.height);
@@ -218,6 +223,7 @@ class Player {
                 if (this.hasTool('axe')) {
                     world.removeTile(x, y);
                     this.inventory.addItem(ITEMS.WOOD, MathUtils.randomInt(2, 4));
+                    audioManager.playCollect();
                     return { success: true, message: 'Cortou madeira!' };
                 }
                 return { success: false, message: 'Precisa de um machado!' };
@@ -227,22 +233,26 @@ class Player {
                 if (this.hasTool('pickaxe')) {
                     world.removeTile(x, y);
                     this.inventory.addItem(ITEMS.STONE, MathUtils.randomInt(2, 4));
+                    audioManager.playCollect();
                     return { success: true, message: 'Coletou pedra!' };
                 }
                 // Mão livre - coleta menos pedra
                 world.removeTile(x, y);
                 this.inventory.addItem(ITEMS.STONE, 1);
+                audioManager.playCollect();
                 return { success: true, message: 'Recolheu 1 pedra com as mãos.' };
                 
             case 'berry_bush':
                 // Colher frutas
                 this.inventory.addItem(ITEMS.BERRY, MathUtils.randomInt(2, 5));
+                audioManager.playCollect();
                 return { success: true, message: 'Coletou frutas!' };
                 
             case 'tall_grass':
                 // Cortar grama alta para fibra
                 world.removeTile(x, y);
                 this.inventory.addItem(ITEMS.FIBER, MathUtils.randomInt(1, 3));
+                audioManager.playCollect();
                 return { success: true, message: 'Coletou fibra!' };
                 
             case 'water':
@@ -257,6 +267,7 @@ class Player {
                     messages.push('Cantil cheio!');
                 }
                 if (messages.length > 0) {
+                    audioManager.playDrink();
                     return { success: true, message: messages.join(' ') };
                 }
                 return { success: false, message: 'Sede já está cheia!' };
@@ -314,6 +325,7 @@ class Player {
             if (dist < 50 && !child.following) {
                 child.following = true;
                 this.childrenFollowing.push(child);
+                audioManager.playChildRescue();
                 return { success: true, message: `${child.name} está seguindo você!` };
             }
         }
@@ -332,6 +344,7 @@ class Player {
         
         this.health -= amount;
         this.health = MathUtils.clamp(this.health, 0, this.maxHealth);
+        audioManager.playDamage();
         
         if (amount >= 5) { // Só ficar invencível com dano significativo
             this.isInvincible = true;
@@ -358,6 +371,7 @@ class Player {
         if (this.attackCooldown > 0) return;
         
         this.attackCooldown = 0.5; // 0.5 segundos entre ataques
+        audioManager.playAttack();
         
         let damage = 5; // Dano básico (soco)
         
@@ -381,6 +395,7 @@ class Player {
             const dist = MathUtils.distance(attackX, attackY, enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
             if (dist < 30) {
                 enemy.takeDamage(damage);
+                audioManager.playHit();
                 return { hit: true, target: enemy };
             }
         }

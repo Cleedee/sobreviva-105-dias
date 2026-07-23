@@ -379,6 +379,7 @@ class World {
                 if (dist < 24) {
                     // Armadilha disparou!
                     enemy.takeDamage(30);
+                    audioManager.playTrap();
                     this.activeTraps.splice(i, 1);
                     break;
                 }
@@ -815,8 +816,14 @@ class Enemy {
         
         // Mudar estado baseado na distância
         if (distToPlayer < this.attackRange) {
+            if (this.state !== 'attack') {
+                this.type === 'bear' ? audioManager.playBearRoar() : audioManager.playWolfGrowl();
+            }
             this.state = 'attack';
         } else if (distToPlayer < this.detectionRange) {
+            if (this.state === 'patrol' || this.state === 'idle') {
+                this.type === 'bear' ? audioManager.playBearRoar() : audioManager.playWolfGrowl();
+            }
             this.state = 'chase';
         } else if (this.state === 'chase') {
             this.state = 'patrol';
@@ -900,12 +907,15 @@ class Enemy {
         this.health -= amount;
         if (this.health <= 0) {
             this.die();
+        } else {
+            audioManager.playHit();
         }
         this.state = 'chase'; // Reagir ao dano
     }
     
     die() {
         this.isAlive = false;
+        audioManager.playEnemyDeath();
         // TODO: Dropar itens
     }
     

@@ -36,13 +36,13 @@ Lista de funcionalidades a implementar e melhorias.
 ## 🟡 Prioridade Média (Importante)
 
 ### Sons
-- [ ] Música de fundo (dia)
-- [ ] Música de fundo (noite)
-- [ ] Efeito de passos
-- [ ] Efeito de ataque
-- [ ] Efeito de coleta
-- [ ] Sons dos inimigos
-- [ ] Sons ambientes (vento, pássaros, etc.)
+- [x] Música de fundo (dia)
+- [x] Música de fundo (noite)
+- [x] Efeito de passos
+- [x] Efeito de ataque
+- [x] Efeito de coleta
+- [x] Sons dos inimigos
+- [x] Sons ambientes (vento, pássaros, etc.)
 
 ### Arte
 - [ ] Sprite sheet do jogador
