@@ -181,6 +181,36 @@ const ITEMS = {
         hungerRestore: 30,
         healthRestore: 15
     },
+    COOKED_RABBIT: {
+        id: 'cooked_rabbit',
+        name: '🍖 Carne de Coelho Assada',
+        description: 'Restaura 20 de fome e 5 de vida.',
+        type: 'food',
+        stackable: true,
+        maxStack: 20,
+        hungerRestore: 20,
+        healthRestore: 5
+    },
+    COOKED_DEER: {
+        id: 'cooked_deer',
+        name: '🍖 Carne de Veado Assada',
+        description: 'Restaura 35 de fome e 10 de vida.',
+        type: 'food',
+        stackable: true,
+        maxStack: 15,
+        hungerRestore: 35,
+        healthRestore: 10
+    },
+    COOKED_BOAR: {
+        id: 'cooked_boar',
+        name: '🍖 Carne de Javali Assada',
+        description: 'Restaura 40 de fome e 15 de vida.',
+        type: 'food',
+        stackable: true,
+        maxStack: 10,
+        hungerRestore: 40,
+        healthRestore: 15
+    },
     
     // Água
     WATER_BOTTLE: {
@@ -265,6 +295,14 @@ const ITEMS = {
         type: 'building',
         stackable: false
     },
+    CAMPFIRE: {
+        id: 'campfire_item',
+        name: '🔥 Fogueira',
+        description: 'Aquece durante a noite e cozinha alimentos. Coloque no chão.',
+        type: 'building',
+        stackable: true,
+        maxStack: 5
+    },
     
     // Roupas de Pele
     RABBIT_GLOVES: {
@@ -345,14 +383,15 @@ class Inventory {
         // Encontrar slot vazio
         for (let i = 0; i < this.slots.length; i++) {
             if (this.slots[i] === null) {
+                const qtyToPlace = item.stackable ? quantity : 1;
                 this.slots[i] = {
                     ...item,
-                    quantity: item.stackable ? quantity : 1,
+                    quantity: qtyToPlace,
                     durability: item.durability || null
                 };
-                quantity--;
+                quantity -= qtyToPlace;
                 
-                if (!item.stackable || quantity <= 0) return true;
+                if (quantity <= 0) return true;
             }
         }
         

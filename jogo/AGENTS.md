@@ -154,8 +154,9 @@ input → update(dt) → render() → input.clearFrame()
 
 ## 🐛 Bugs Conhecidos
 
-- `const` vs `let` em `Player.attack()`: variáveis `attackX`/`attackY` causam `TypeError` se re-declaradas como `const`
+- `const` vs `let` em `Player.attack()`: variáveis `attackX`/`attackY` causam `TypeError` se declaradas como `const`
 - Métodos do sistema de chaves (`renderKeys`, `checkKeyPickup`, `getNearbyKey`) precisam existir em `world.js` ou o game loop quebra
+- `inventory.addItem()` para itens empilháveis: certificar-se de que a quantidade correta é colocada em um único slot (já corrigido)
 
 ---
 

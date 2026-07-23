@@ -82,31 +82,12 @@ const RECIPES = [
             { itemId: 'stone', quantity: 1, name: '🪨 Pedra' }
         ]
     },
-    {
-        id: 'cooked_meat',
-        name: '🍖 Carne Assada',
-        description: 'Restaura 30 de fome.',
-        result: { ...ITEMS.COOKED_MEAT },
-        resultQuantity: 1,
-        ingredients: [
-            { itemId: 'meat', quantity: 1, name: '🥩 Carne' }
-        ],
-        requiresNear: 'campfire'
-    },
+
     {
         id: 'cooked_rabbit',
         name: '🍖 Carne de Coelho Assada',
         description: 'Restaura 20 de fome e 5 de vida.',
-        result: {
-            id: 'cooked_rabbit',
-            name: '🍖 Carne de Coelho Assada',
-            description: 'Restaura 20 de fome e 5 de vida.',
-            type: 'food',
-            stackable: true,
-            maxStack: 20,
-            hungerRestore: 20,
-            healthRestore: 5
-        },
+        result: { ...ITEMS.COOKED_RABBIT },
         resultQuantity: 1,
         ingredients: [
             { itemId: 'rabbit_meat', quantity: 1, name: '🐇 Carne de Coelho' }
@@ -117,16 +98,7 @@ const RECIPES = [
         id: 'cooked_deer',
         name: '🍖 Carne de Veado Assada',
         description: 'Restaura 35 de fome e 10 de vida.',
-        result: {
-            id: 'cooked_deer',
-            name: '🍖 Carne de Veado Assada',
-            description: 'Restaura 35 de fome e 10 de vida.',
-            type: 'food',
-            stackable: true,
-            maxStack: 15,
-            hungerRestore: 35,
-            healthRestore: 10
-        },
+        result: { ...ITEMS.COOKED_DEER },
         resultQuantity: 1,
         ingredients: [
             { itemId: 'deer_meat', quantity: 1, name: '🦌 Carne de Veado' }
@@ -137,16 +109,7 @@ const RECIPES = [
         id: 'cooked_boar',
         name: '🍖 Carne de Javali Assada',
         description: 'Restaura 40 de fome e 15 de vida.',
-        result: {
-            id: 'cooked_boar',
-            name: '🍖 Carne de Javali Assada',
-            description: 'Restaura 40 de fome e 15 de vida.',
-            type: 'food',
-            stackable: true,
-            maxStack: 10,
-            hungerRestore: 40,
-            healthRestore: 15
-        },
+        result: { ...ITEMS.COOKED_BOAR },
         resultQuantity: 1,
         ingredients: [
             { itemId: 'boar_meat', quantity: 1, name: '🐗 Carne de Javali' }
@@ -220,6 +183,17 @@ const RECIPES = [
         ingredients: [
             { itemId: 'wood', quantity: 8, name: '🪵 Madeira' },
             { itemId: 'fiber', quantity: 4, name: '🌿 Fibra' }
+        ]
+    },
+    {
+        id: 'campfire',
+        name: '🔥 Fogueira',
+        description: 'Aquece durante a noite e cozinha alimentos. Coloque no chão.',
+        result: { ...ITEMS.CAMPFIRE },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'wood', quantity: 5, name: '🪵 Madeira' },
+            { itemId: 'fiber', quantity: 2, name: '🌿 Fibra' }
         ]
     }
 ];

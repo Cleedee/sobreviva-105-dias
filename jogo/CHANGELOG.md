@@ -230,6 +230,33 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Causava `TypeError` no `render()`, impedindo o `requestAnimationFrame` de prosseguir
 - Adicionados os 3 métodos faltantes
 
+#### Drop de peles não funcionava (itens empilháveis ocupavam vários slots)
+- `inventory.js`: `addItem()` criava um slot separado para cada unidade de item empilhável ao invés de colocar tudo em um único slot
+- Causava inventário lotado rapidamente, impedindo o drop de peles por falta de espaço
+- Corrigido: itens empilháveis vão para UM slot com a quantidade total
+
+#### Peles com chance probabilística (70-90%) causavam confusão
+- `world.js`: drops de `RABBIT_PELT`, `DEER_PELT` e `BOAR_PELT` agora são **100% garantidos** (removido `chance`)
+
+### 🔥 Fogueira
+
+#### 🔨 Craft da Fogueira
+- Nova receita: 5 Madeira + 2 Fibra
+- `inventory.js`: novo item `CAMPFIRE` (id: `campfire_item`)
+- `player.js`: colocação no chão ao interagir com o tile vazio (mesmo sistema de cabana/armadilha)
+
+#### 🥵 Aquecimento na Fogueira
+- `player.js`: novo método `isNearCampfire(world)` — verifica se há fogueira num raio de 3 tiles
+- `player.js`: dano de frio reduzido em **80%** quando perto de uma fogueira
+- Funciona em conjunto com o Casaco de Veado (reduções acumulativas)
+
+#### 🍖 Assar Carnes Específicas
+- `inventory.js`: novos itens `COOKED_RABBIT`, `COOKED_DEER`, `COOKED_BOAR`
+- `crafting.js`: receitas atualizadas para usar as constantes de `ITEMS`
+- `player.js`: interação com fogueira agora reconhece `rabbit_meat`, `deer_meat` e `boar_meat`
+- Receita genérica `cooked_meat` removida (substituída pelas específicas)
+- Removida receita inválida que usava `itemId: 'meat'` (inexistente)
+
 ---
 
 ## [1.7.0] - 2026-07-22

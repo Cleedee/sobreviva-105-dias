@@ -1643,7 +1643,7 @@ class Rabbit extends Animal {
         
         this.drops = [
             { item: ITEMS.RABBIT_MEAT, minQty: 1, maxQty: 2 },
-            { item: ITEMS.RABBIT_PELT, minQty: 1, maxQty: 1, chance: 0.7 }
+            { item: ITEMS.RABBIT_PELT, minQty: 1, maxQty: 1 }
         ];
     }
     
@@ -1719,7 +1719,7 @@ class Deer extends Animal {
         
         this.drops = [
             { item: ITEMS.DEER_MEAT, minQty: 2, maxQty: 4 },
-            { item: ITEMS.DEER_PELT, minQty: 1, maxQty: 2, chance: 0.8 }
+            { item: ITEMS.DEER_PELT, minQty: 1, maxQty: 2 }
         ];
     }
     
@@ -1798,7 +1798,7 @@ class Boar extends Animal {
         
         this.drops = [
             { item: ITEMS.BOAR_MEAT, minQty: 3, maxQty: 5 },
-            { item: ITEMS.BOAR_PELT, minQty: 1, maxQty: 2, chance: 0.9 }
+            { item: ITEMS.BOAR_PELT, minQty: 1, maxQty: 2 }
         ];
     }
     

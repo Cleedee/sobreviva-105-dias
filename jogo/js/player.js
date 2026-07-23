@@ -116,6 +116,11 @@ class Player {
                     coldDamage *= (1 - this.equippedArmor.body.coldResist);
                 }
                 
+                // Reduzir dano se estiver perto de uma fogueira
+                if (this.isNearCampfire(world)) {
+                    coldDamage *= 0.2; // reduz 80% do dano de frio
+                }
+                
                 if (coldDamage > 0) {
                     this.takeDamage(coldDamage);
                     if (game && game.ui) {
@@ -242,6 +247,14 @@ class Player {
                 world.placeTrap(checkX, checkY);
                 return { success: true, message: 'Armadilha armada!' };
             }
+            
+            // Tentar colocar fogueira no chão
+            if (this.inventory.hasItem('campfire_item')) {
+                const cfIndex = this.inventory.slots.findIndex(s => s && s.id === 'campfire_item');
+                this.inventory.removeItem(cfIndex);
+                world.setTile(checkX, checkY, { ...TILE_TYPES.CAMPFIRE });
+                return { success: true, message: 'Fogueira acesa!' };
+            }
         }
         
         // Verificar entidades próximas
@@ -335,11 +348,20 @@ class Player {
                 return { success: false, message: 'Cela trancada!' };
                 
             case 'campfire':
-                // Assar carne
-                if (this.inventory.hasItem('meat')) {
-                    this.inventory.removeItem(this.inventory.slots.findIndex(s => s && s.id === 'meat'));
-                    this.inventory.addItem(ITEMS.COOKED_MEAT);
-                    return { success: true, message: 'Assou a carne!' };
+                // Assar carne (qualquer tipo)
+                const rawMeats = ['rabbit_meat', 'deer_meat', 'boar_meat'];
+                const cookedMap = {
+                    rabbit_meat: { item: ITEMS.COOKED_RABBIT, name: 'Carne de Coelho Assada' },
+                    deer_meat: { item: ITEMS.COOKED_DEER, name: 'Carne de Veado Assada' },
+                    boar_meat: { item: ITEMS.COOKED_BOAR, name: 'Carne de Javali Assada' }
+                };
+                for (const meatId of rawMeats) {
+                    const slotIdx = this.inventory.slots.findIndex(s => s && s.id === meatId);
+                    if (slotIdx !== -1) {
+                        this.inventory.removeItem(slotIdx);
+                        this.inventory.addItem(cookedMap[meatId].item);
+                        return { success: true, message: `Assou ${cookedMap[meatId].name}!` };
+                    }
                 }
                 return { success: false, message: 'Nada para assar!' };
                 
@@ -400,6 +422,20 @@ class Player {
             return this.equippedArmor.hands.bonusLoot;
         }
         return 0;
+    }
+    
+    // Verificar se está perto de uma fogueira (alcance 3 tiles)
+    isNearCampfire(world) {
+        const tileX = Math.floor((this.x + this.width / 2) / GAME_CONFIG.TILE_SIZE);
+        const tileY = Math.floor((this.y + this.height / 2) / GAME_CONFIG.TILE_SIZE);
+        const range = 3;
+        for (let dy = -range; dy <= range; dy++) {
+            for (let dx = -range; dx <= range; dx++) {
+                const tile = world.getTile(tileX + dx, tileY + dy);
+                if (tile && tile.type === 'campfire') return true;
+            }
+        }
+        return false;
     }
     
     // Receber dano

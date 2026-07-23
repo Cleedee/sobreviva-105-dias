@@ -47,8 +47,10 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Som de caça e coleta
 
 ### Fogueira
+- [x] Craftar fogueira (receita: 5 madeira + 2 fibra)
+- [x] Colocar fogueira no chão
+- [x] Aquecimento perto da fogueira (-80% dano de frio)
 - [ ] Fogueira se extingue após um tempo
-- [ ] Craftar fogueira (novo - receita: 5 madeira + 2 fibra)
 - [ ] Religar fogueira (precisa de madeira)
 - [ ] Luz da fogueira ilumina área ao redor na noite
 
