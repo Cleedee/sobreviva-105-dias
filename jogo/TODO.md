@@ -23,6 +23,10 @@ Lista de funcionalidades a implementar e melhorias.
   - [x] Bolsa (3 fibra)
   - [x] Cerca (3 madeira)
   - [x] Armadilha (2 madeira + 1 pedra)
+- [ ] Novas receitas:
+  - [ ] Arco e Flecha (3 madeira + 2 fibra)
+  - [ ] Fogueira (5 madeira + 2 fibra)
+  - [ ] Cantil melhorado (2 pedra + 1 fibra) - carrega mais água
 
 ### Crianças
 - [x] Sistema de fome/sede das crianças
@@ -30,6 +34,23 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Crianças morrem se não cuidar
 - [ ] Opção de devolver para a cela
 - [ ] Diálogos/emoções das crianças
+
+### Sistema de Caça
+- [ ] Animais para caçar (coelhos, veados, javalis)
+- [ ] Ferramentas de caça:
+  - [ ] Arco e Flecha (novo - craftar: 3 madeira + 2 fibra)
+  - [ ] Lança (já existe - eficiente para caça)
+  - [ ] Armadilha (já existe - captura animal vivo)
+  - [ ] Mãos vazias (difícil, menos recompensa)
+- [ ] Drop de carne e peles ao caçar
+- [ ] Animais fogem do jogador
+- [ ] Som de caça e coleta
+
+### Fogueira
+- [ ] Fogueira se extingue após um tempo
+- [ ] Craftar fogueira (novo - receita: 5 madeira + 2 fibra)
+- [ ] Religar fogueira (precisa de madeira)
+- [ ] Luz da fogueira ilumina área ao redor na noite
 
 ### Sistema de Chaves
 - [x] Chaves espalhadas pelo mapa
@@ -85,6 +106,8 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Boss fights
 - [ ] Sistema de dificuldade progressiva
 - [ ] Conquistas/achievements
+- [ ] Necessidade de calor (fogueira) em noites frias
+- [ ] Sistema de fome mais realista (digestão, peso)
 
 ### UI/UX
 - [ ] Tutorial introdutório
