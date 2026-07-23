@@ -122,6 +122,45 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - **Celas trancadas** aparecem como pontos cinza no minimapa
 - Ajuda o jogador a planejar rota de coleta
 
+#### 🦌 Sistema de Caça
+- **3 tipos de animais** caçáveis espalhados pelo mapa:
+  - 🐇 **Coelho**: vida 20, rápido, drops 1-2 carne + 70% chance de pele
+  - 🦌 **Veado**: vida 40, muy rápido, drops 2-4 carne + 80% chance de pele
+  - 🐗 **Javali**: vida 60, forte, drops 3-5 carne + 90% chance de pele
+- Animais **fogem do jogador** quando detectados
+- **Armas para caçar**: Lança, Arco e Flecha (novo), Armadilha, Mãos vazias
+- **Minimapa**: animais aparecem como pontos marrom
+
+#### 🏹 Arco e Flecha
+- Nova arma à distância (25 de dano)
+- Receita: 3 Madeira + 2 Fibra
+- Ideal para caça de animais rápidos
+
+#### 🧥 Roupas de Proteção (usando peles)
+- 🧤 **Luvas de Coelho** (2 Pele de Coelho + 1 Fibra): +1 item ao coletar recursos
+- 🧥 **Casaco de Veado** (2 Pele de Veado + 3 Fibra): 50% resistência ao frio da noite
+- 🛡️ **Armadura de Javali** (3 Pele de Javali + 4 Fibra + 2 Madeira): 30% redução de dano
+
+#### 🪤 Armadilha Melhorada
+- Receita: 3 Madeira + 2 Pedra + 1 Pele de Coelho
+- Mais dano (50 vs 30 da armadilha normal)
+- Captura animais maiores
+
+#### 🛏️ Cama de Pele
+- Receita: 2 Pele de Veado + 4 Madeira + 2 Fibra
+- Coloque na cabana para crianças recuperarem mais durante o sono
+
+#### 🍖 Carnes Assadas Específicas
+- 🍖 Carne de Coelho Assada (+20 fome, +5 vida)
+- 🍖 Carne de Veado Assada (+35 fome, +10 vida)
+- 🍖 Carne de Javali Assada (+40 fome, +15 vida)
+- Todas precisam de fogueira para cozinhar
+
+#### 🥶 Sistema de Frio
+- Noites causam **2 de dano** a cada 10 segundos
+- Casaco de Veado reduz 50% do dano de frio
+- Sem proteção, jogador pode morrer de hipotermia
+
 ### 🔧 Alterações Técnicas
 
 #### Arquivos Modificados
@@ -133,22 +172,49 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - `getNearbyKey(player)`: verifica se há chave nas proximidades
 - `renderKeys(ctx, camera)`: renderiza chaves com brilho dourado e número
 - `getKeysState()` e `loadKeysState()`: suporte a save/load das chaves
+- Array `this.animals` para animais caçáveis
+- `spawnAnimals()`: gera coelhos (15-25), veados (8-12), javalis (5-8)
+- `dropAnimalItems(animal, player)`: dropa carne e peles ao matar animal
+- `renderAnimals(ctx, camera)`: renderiza animais no canvas
+- `checkTraps()`: armadilhas agora capturam animais também
+
+##### `js/player.js`
+- `equippedArmor`: sistema de armadura (hands/body)
+- `coldDamageTimer`: timer para dano de frio durante a noite
+- `takeDamage()`: considera redução de dano da Armadura de Javali
+- `getLootBonus()`: retorna bônus de loot das Luvas de Coelho
+- `attack()`: agora verifica acerto em animais também
+- `interactWithTile()`: coleta de recursos com bônus de luvas
 
 ##### `js/game.js`
-- Chaves renderizadas no loop principal
-- Detecção de tecla E para pegar chaves (prioridade sobre outras interações)
-- Prompt "pressione E para pegar a chave"
+- Renderização de animais no loop principal
+- Mensagem ao atacar animais
 
 ##### `js/inventory.js`
-- Case `key` no `useItem()`: mostra info "Abre a cela #X"
-- Botão de usar para chaves mostra "🔑 Info"
+- Novos itens: `RABBIT_GLOVES`, `DEER_COAT`, `BOAR_ARMOR`, `IMPROVED_TRAP`, `FUR_BED`
+- Novos itens de carne: `RABBIT_MEAT`, `DEER_MEAT`, `BOAR_MEAT`
+- Novos itens de pele: `RABBIT_PELT`, `DEER_PELT`, `BOAR_PELT`
+- Arma `BOW` (Arco e Flecha)
+
+##### `js/crafting.js`
+- Novas receitas:
+  - Arco e Flecha (3 Madeira + 2 Fibra)
+  - Luvas de Coelho (2 Pele de Coelho + 1 Fibra)
+  - Casaco de Veado (2 Pele de Veado + 3 Fibra)
+  - Armadura de Javali (3 Pele de Javali + 4 Fibra + 2 Madeira)
+  - Armadilha Melhorada (3 Madeira + 2 Pedra + 1 Pele de Coelho)
+  - Cama de Pele (2 Pele de Veado + 4 Madeira + 2 Fibra)
+  - Carnes assadas (coelho, veado, javali) - requerem fogueira
 
 ##### `js/save.js`
-- Serialização e restauração do estado das chaves
-- Chaves salvas com `tileX`, `tileY`, `prisonNumber` e `collected`
+- Serialização e restauração de animais
+- Serialização e restauração de armadura equipada
+- Novos campos: `animals`, `equippedArmor`
 
 ##### `js/ui.js`
-- Minimapa mostra chaves (pontos dourados) e celas trancadas (pontos cinza)
+- Minimapa mostra animais (pontos marrom)
+- Botão "Equipar" para armaduras
+- Suporte a equipar Luvas, Casaco e Armadura
 
 ---
 
