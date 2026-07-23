@@ -140,6 +140,7 @@ Lista de funcionalidades a implementar e melhorias.
 - [ ] Pathfinding para inimigos
 - [ ] Sistema de partículas
 - [x] Suporte a mobile (touch controls)
+- [x] HUD responsivo: barras, time-display, minimapa e inventário adaptados para telas pequenas
 
 ---
 

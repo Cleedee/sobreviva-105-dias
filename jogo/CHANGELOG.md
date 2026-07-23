@@ -259,6 +259,22 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.9.1] - 2026-07-23
+
+### 🐛 Correções
+
+#### 📱 Interface Mobile
+- **Barras de status** redimensionadas em telas pequenas: bar-container reduzido para 65px, labels para 40px, padding e gap reduzidos
+- **Time display** reposicionado no canto superior direito (right: 65px) com tamanho compacto para evitar sobreposição com as barras de status
+- **Help button** (#help-btn) oculto em telas ≤ 600px para não sobrepor o botão de pausa dos controles touch (#aux-buttons)
+- **Children display** oculto em telas ≤ 600px para liberar espaço
+- **Minimapa** reduzido para 80x80px em telas pequenas
+- **Quick inventory** com slots menores (42px) e espaçamento reduzido
+- **Interaction prompt** com padding e fonte reduzidos
+- Breakpoints responsivos revisados: 768px (moderado) e 600px (agressivo)
+
+---
+
 ## [1.7.0] - 2026-07-22
 
 ### ✨ Novas Funcionalidades
