@@ -273,6 +273,22 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - A canoa permanece no local onde foi deixada até ser usada novamente
 - Canoas aparecem como um pequeno barco de madeira no tile de água
 
+#### 🖥️ Adaptação Dinâmica ao Hardware
+- Sistema de **3 tiers** (Baixo/Médio/Alto) detectados automaticamente:
+  - **Baixo** (mobile, ≤2 GB RAM, ≤2 núcleos): mapa 80×80, metade das entidades
+  - **Médio** (≤4 GB RAM, ≤4 núcleos): mapa 120×120, ~80% das entidades
+  - **Alto** (8 GB+ RAM, muitos núcleos): mapa 180×180, 1.4× entidades, 8 crianças
+- Nova função `applyHardwareConfig()` em `utils.js` que ajusta `GAME_CONFIG` antes da inicialização
+- Detecção usa `navigator.deviceMemory`, `navigator.hardwareConcurrency` e User-Agent
+- Entidades (inimigos/animais) escalam proporcionalmente à área do mapa
+- Distância das celas ajustada conforme o tamanho do mapa
+
+#### 💾 Save Otimizado (Mapas Grandes)
+- Tiles agora salvos como **array plano de números** (`tileIds`) em vez de objetos
+- Propriedades extras (locked, prisonNumber, childId) guardadas separadamente em `tileExtras`
+- Redução de ~60% no tamanho do JSON salvo
+- Compatibilidade retroativa com saves do formato legado (v1.9.x)
+
 #### 🔧 Alterações Técnicas
 
 ##### `js/inventory.js`
@@ -303,9 +319,23 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Verificação de colisão adaptada para canoa (só pode mover sobre água)
 - Prompt contextual para água: mostra "Pressione **E** para usar canoa" quando tem canoa no inventário
 
+##### `js/utils.js`
+- `HardwareDetect`: detecção automática de capacidade via `deviceMemory`, `hardwareConcurrency` e User-Agent
+- `TIER_CONFIG`: parâmetros por tier (low/medium/high) para tamanho do mapa, entidades e crianças
+- `applyHardwareConfig()`: aplica a configuração ao `GAME_CONFIG` antes da inicialização
+
+##### `js/main.js`
+- `applyHardwareConfig()` chamado antes de `new Game()`
+
+##### `js/world.js`
+- `spawnEnemies()` e `spawnAnimals()` escalam proporcionalmente à área do mapa (`_areaRatio`)
+- `createPrisons()` usa distância dinâmica conforme o tier
+
 ##### `js/save.js`
 - Serialização e restauração de canoas ativas no mundo
 - Salva estado `isInCanoe` e posição da canoa do jogador
+- Tiles otimizados: `tileIds` (array de números) + `tileExtras` (só propriedades especiais)
+- Compatibilidade retroativa com saves legados (formato `tiles`)
 
 ##### `sw.js`
 - Cache version bump: `sobreviva-105-v6` → `sobreviva-105-v7`

@@ -39,6 +39,81 @@ const GAME_CONFIG = {
     FULL_MOON_INTERVAL: 7
 };
 
+// Detecção de hardware e configuração por tier
+const HardwareDetect = {
+    _tier: null,
+    
+    detect() {
+        if (this._tier) return this._tier;
+        
+        const mem = navigator.deviceMemory;          // undefined se não suportado
+        const cores = navigator.hardwareConcurrency; // undefined se não suportado
+        const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+        
+        let tier;
+        if (isMobile || (mem && mem <= 2) || (cores && cores <= 2)) {
+            tier = 'low';
+        } else if ((mem && mem <= 4) || (cores && cores <= 4)) {
+            tier = 'medium';
+        } else {
+            tier = 'high';
+        }
+        
+        this._tier = tier;
+        console.log(`🖥️ Hardware detectado: ${tier} (mem: ${mem || '?'}GB, cores: ${cores || '?'}, mobile: ${isMobile})`);
+        return tier;
+    },
+    
+    getTier() {
+        return this._tier || this.detect();
+    }
+};
+
+// Configurações por tier de hardware
+const TIER_CONFIG = {
+    low: {
+        label: '🔵 Baixo',
+        mapSize: 80,
+        enemyMultiplier: 0.5,
+        animalMultiplier: 0.5,
+        children: 6,
+        prisonDistance: [25, 50]
+    },
+    medium: {
+        label: '🟢 Médio',
+        mapSize: 120,
+        enemyMultiplier: 0.8,
+        animalMultiplier: 0.8,
+        children: 6,
+        prisonDistance: [35, 65]
+    },
+    high: {
+        label: '🔴 Alto',
+        mapSize: 180,
+        enemyMultiplier: 1.4,
+        animalMultiplier: 1.4,
+        children: 8,
+        prisonDistance: [45, 90]
+    }
+};
+
+function applyHardwareConfig() {
+    const tier = HardwareDetect.getTier();
+    const cfg = TIER_CONFIG[tier];
+    
+    GAME_CONFIG.MAP_WIDTH = cfg.mapSize;
+    GAME_CONFIG.MAP_HEIGHT = cfg.mapSize;
+    GAME_CONFIG.TOTAL_CHILDREN = cfg.children;
+    GAME_CONFIG._hardwareTier = tier;
+    GAME_CONFIG._areaRatio = (cfg.mapSize * cfg.mapSize) / (100 * 100);
+    GAME_CONFIG._enemyMultiplier = cfg.enemyMultiplier;
+    GAME_CONFIG._animalMultiplier = cfg.animalMultiplier;
+    GAME_CONFIG._prisonDistance = cfg.prisonDistance;
+    
+    console.log(`🗺️ Mapa ajustado: ${cfg.mapSize}×${cfg.mapSize} (${cfg.label})`);
+    return tier;
+}
+
 // Cores do tilemap
 const TILE_COLORS = {
     GRASS_1: '#4a7c3f',

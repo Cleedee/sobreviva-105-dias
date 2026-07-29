@@ -91,19 +91,24 @@ class SaveManager {
     }
 
     serializeWorld(world) {
-        // Serializar tiles (só id + propriedades variáveis)
-        const tiles = [];
+        // Serializar tiles otimizado: array plano de IDs + extras separados
+        // Formato: tileIds[y][x] = id (número), tileExtras contém propriedades adicionais
+        const tileIds = [];
+        const tileExtras = {};
         for (let y = 0; y < world.height; y++) {
-            tiles[y] = [];
+            tileIds[y] = [];
             for (let x = 0; x < world.width; x++) {
                 const t = world.tiles[y][x];
-                if (!t) { tiles[y][x] = null; continue; }
-                const tileData = { id: t.id };
-                // Propriedades extras que podem existir
-                if (t.locked !== undefined) tileData.locked = t.locked;
-                if (t.prisonNumber !== undefined) tileData.prisonNumber = t.prisonNumber;
-                if (t.child) tileData.childId = t.child.id;
-                tiles[y][x] = tileData;
+                if (!t) { tileIds[y][x] = 0; continue; }
+                tileIds[y][x] = t.id || 0;
+                // Só guarda extras se existirem
+                if (t.locked !== undefined || t.prisonNumber !== undefined || t.child) {
+                    const extra = {};
+                    if (t.locked !== undefined) extra.l = t.locked;
+                    if (t.prisonNumber !== undefined) extra.p = t.prisonNumber;
+                    if (t.child) extra.c = t.child.id;
+                    tileExtras[`${x},${y}`] = extra;
+                }
             }
         }
 
@@ -201,7 +206,8 @@ class SaveManager {
             seed: world.seed,
             campX: world.campX,
             campY: world.campY,
-            tiles: tiles,
+            tileIds: tileIds,
+            tileExtras: tileExtras,
             enemies: enemies,
             animals: animals,
             children: children,
@@ -318,22 +324,64 @@ class SaveManager {
         world.campY = wData.campY;
         world.fences = wData.fences || {};
 
-        // Restaurar tiles
+        // Restaurar tiles (suporta formato novo tileIds+tileExtras e legado tiles)
         world.tiles = [];
-        for (let y = 0; y < wData.height; y++) {
-            world.tiles[y] = [];
-            for (let x = 0; x < wData.width; x++) {
-                const td = wData.tiles[y][x];
-                if (!td) { world.tiles[y][x] = null; continue; }
-                // Reconstruir tile a partir do id
-                const tileType = Object.values(TILE_TYPES).find(tt => tt.id === td.id);
-                if (tileType) {
-                    const tile = { ...tileType };
-                    if (td.locked !== undefined) tile.locked = td.locked;
-                    if (td.prisonNumber !== undefined) tile.prisonNumber = td.prisonNumber;
-                    world.tiles[y][x] = tile;
-                } else {
-                    // Fallback: grama
+        if (wData.tileIds) {
+            // Formato otimizado (v1.10.0+)
+            const tileExtras = wData.tileExtras || {};
+            for (let y = 0; y < wData.height; y++) {
+                world.tiles[y] = [];
+                for (let x = 0; x < wData.width; x++) {
+                    const id = wData.tileIds[y][x];
+                    if (!id) { world.tiles[y][x] = null; continue; }
+                    const tileType = Object.values(TILE_TYPES).find(tt => tt.id === id);
+                    if (tileType) {
+                        const tile = { ...tileType };
+                        const extra = tileExtras[`${x},${y}`];
+                        if (extra) {
+                            if (extra.l !== undefined) tile.locked = extra.l;
+                            if (extra.p !== undefined) tile.prisonNumber = extra.p;
+                        }
+                        world.tiles[y][x] = tile;
+                    } else {
+                        world.tiles[y][x] = { ...TILE_TYPES.GRASS };
+                    }
+                }
+            }
+            // Restaurar child references das prisons
+            for (const key of Object.keys(tileExtras)) {
+                const extra = tileExtras[key];
+                if (extra.c !== undefined) {
+                    const [x, y] = key.split(',').map(Number);
+                    const tile = world.getTile(x, y);
+                    if (tile) {
+                        tile.childId = extra.c;
+                    }
+                }
+            }
+        } else if (wData.tiles) {
+            // Formato legado (v1.9.x)
+            for (let y = 0; y < wData.height; y++) {
+                world.tiles[y] = [];
+                for (let x = 0; x < wData.width; x++) {
+                    const td = wData.tiles[y][x];
+                    if (!td) { world.tiles[y][x] = null; continue; }
+                    const tileType = Object.values(TILE_TYPES).find(tt => tt.id === td.id);
+                    if (tileType) {
+                        const tile = { ...tileType };
+                        if (td.locked !== undefined) tile.locked = td.locked;
+                        if (td.prisonNumber !== undefined) tile.prisonNumber = td.prisonNumber;
+                        world.tiles[y][x] = tile;
+                    } else {
+                        world.tiles[y][x] = { ...TILE_TYPES.GRASS };
+                    }
+                }
+            }
+        } else {
+            // Sem dados de tiles, gerar mundo vazio
+            for (let y = 0; y < wData.height; y++) {
+                world.tiles[y] = [];
+                for (let x = 0; x < wData.width; x++) {
                     world.tiles[y][x] = { ...TILE_TYPES.GRASS };
                 }
             }
@@ -398,14 +446,29 @@ class SaveManager {
             return child;
         });
 
-        // Restaurar child references em prisons
-        for (let y = 0; y < wData.height; y++) {
-            for (let x = 0; x < wData.width; x++) {
-                const td = wData.tiles[y][x];
-                if (td && td.childId !== undefined) {
-                    const child = world.children.find(c => c.id === td.childId);
-                    if (child && world.tiles[y][x]) {
-                        world.tiles[y][x].child = child;
+        // Restaurar child references em prisons (formato otimizado)
+        const tileExtras = wData.tileExtras || {};
+        for (const key of Object.keys(tileExtras)) {
+            const extra = tileExtras[key];
+            if (extra.c !== undefined) {
+                const [x, y] = key.split(',').map(Number);
+                const child = world.children.find(c => c.id === extra.c);
+                if (child && world.tiles[y] && world.tiles[y][x]) {
+                    world.tiles[y][x].child = child;
+                }
+            }
+        }
+        
+        // Restaurar child references (formato legado)
+        if (wData.tiles) {
+            for (let y = 0; y < wData.height; y++) {
+                for (let x = 0; x < wData.width; x++) {
+                    const td = wData.tiles[y][x];
+                    if (td && td.childId !== undefined) {
+                        const child = world.children.find(c => c.id === td.childId);
+                        if (child && world.tiles[y][x]) {
+                            world.tiles[y][x].child = child;
+                        }
                     }
                 }
             }

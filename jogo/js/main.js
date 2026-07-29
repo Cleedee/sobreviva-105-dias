@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     try {
+        // Detectar hardware e ajustar tamanho do mapa
+        applyHardwareConfig();
+        
         // Criar instância do jogo
         window.game = new Game();
         console.log('Game criado com sucesso!');

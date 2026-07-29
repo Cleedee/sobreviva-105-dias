@@ -153,16 +153,17 @@ class World {
     
     createPrisons() {
         const positions = [];
+        const prisonDist = GAME_CONFIG._prisonDistance || [40, 80];
         
-        // Criar 6 celas espalhadas
+        // Criar celas espalhadas
         for (let i = 0; i < GAME_CONFIG.TOTAL_CHILDREN; i++) {
             let x, y;
             let attempts = 0;
             
             do {
-                // Distância mínima do campamento
+                // Distância do campamento (ajustada pelo tier)
                 const angle = (i / GAME_CONFIG.TOTAL_CHILDREN) * Math.PI * 2;
-                const dist = MathUtils.random(40, 80);
+                const dist = MathUtils.random(prisonDist[0], prisonDist[1]);
                 
                 x = Math.floor(this.campX + Math.cos(angle) * dist);
                 y = Math.floor(this.campY + Math.sin(angle) * dist);
@@ -335,8 +336,11 @@ class World {
     }
     
     spawnEnemies() {
-        // Lobos (reduzido para teste)
-        const wolfCount = MathUtils.randomInt(10, 15);
+        const areaRatio = GAME_CONFIG._areaRatio || 1;
+        const mult = (GAME_CONFIG._enemyMultiplier || 1) * Math.sqrt(areaRatio);
+        
+        // Lobos
+        const wolfCount = Math.round(MathUtils.randomInt(10, 15) * mult);
         for (let i = 0; i < wolfCount; i++) {
             const pos = this.findEmptySpot();
             if (pos) {
@@ -347,8 +351,8 @@ class World {
             }
         }
         
-        // Ursos (reduzido para teste)
-        const bearCount = MathUtils.randomInt(5, 8);
+        // Ursos
+        const bearCount = Math.round(MathUtils.randomInt(5, 8) * mult);
         for (let i = 0; i < bearCount; i++) {
             const pos = this.findEmptySpot();
             if (pos) {
@@ -361,8 +365,11 @@ class World {
     }
     
     spawnAnimals() {
-        // Coelhos (muitos, rápidos, fáceis de caçar)
-        const rabbitCount = MathUtils.randomInt(15, 25);
+        const areaRatio = GAME_CONFIG._areaRatio || 1;
+        const mult = (GAME_CONFIG._animalMultiplier || 1) * Math.sqrt(areaRatio);
+        
+        // Coelhos
+        const rabbitCount = Math.round(MathUtils.randomInt(15, 25) * mult);
         for (let i = 0; i < rabbitCount; i++) {
             const pos = this.findEmptySpot();
             if (pos) {
@@ -373,8 +380,8 @@ class World {
             }
         }
         
-        // Veados (médios, mais rápidos)
-        const deerCount = MathUtils.randomInt(8, 12);
+        // Veados
+        const deerCount = Math.round(MathUtils.randomInt(8, 12) * mult);
         for (let i = 0; i < deerCount; i++) {
             const pos = this.findEmptySpot();
             if (pos) {
@@ -385,8 +392,8 @@ class World {
             }
         }
         
-        // Javalis (poucos, fortes, mais carne)
-        const boarCount = MathUtils.randomInt(5, 8);
+        // Javalis
+        const boarCount = Math.round(MathUtils.randomInt(5, 8) * mult);
         for (let i = 0; i < boarCount; i++) {
             const pos = this.findEmptySpot();
             if (pos) {
