@@ -259,7 +259,7 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
-## [1.10.0] - 2026-07-29
+## [1.11.0] - 2026-07-29
 
 ### ✨ Novas Funcionalidades
 
