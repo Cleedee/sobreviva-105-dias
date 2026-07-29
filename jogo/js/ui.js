@@ -276,10 +276,7 @@ class GameUI {
                     audioManager.playPlace();
                     this.showMessage('Cabana construída!');
                 } else if (item.id === 'fence') {
-                    game.world.setTile(checkX, checkY, {
-                        id: 43, name: 'Cerca', solid: true, color: '#8B6914',
-                        interactable: true, type: 'fence'
-                    });
+                    game.world.setTile(checkX, checkY, { ...TILE_TYPES.FENCE });
                     game.world.placeFence(checkX, checkY, 100);
                     audioManager.playPlace();
                     this.showMessage('Cerca colocada!');

@@ -17,6 +17,7 @@ const TILE_TYPES = {
     CAMPFIRE: { id: 40, name: 'Fogueira', solid: false, color: '#ff6600', interactable: true, type: 'campfire' },
     WORKBENCH: { id: 41, name: 'Bancada', solid: true, color: '#8B4513', interactable: true, type: 'workbench' },
     CABIN: { id: 42, name: 'Cabana', solid: true, color: '#654321', interactable: true, type: 'cabin' },
+    FENCE: { id: 43, name: 'Cerca', solid: true, color: '#8B6914', interactable: true, type: 'fence' },
     PRISON: { id: 50, name: 'Cela', solid: true, color: '#4a4a4a', interactable: true, type: 'prison' }
 };
 
