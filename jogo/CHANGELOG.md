@@ -310,6 +310,14 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 ##### `sw.js`
 - Cache version bump: `sobreviva-105-v6` → `sobreviva-105-v7`
 
+### 🐛 Correções
+
+#### 🚧 Cercas não eram salvas
+- `TILE_TYPES` não possuía entrada `FENCE`, então ao carregar o save o tile virava grama (fallback)
+- Adicionado `TILE_TYPES.FENCE` (`id: 43`) em `world.js`
+- `ui.js` agora usa `{ ...TILE_TYPES.FENCE }` em vez de objeto literal avulso
+- Cercas agora são corretamente serializadas e restauradas no save/load
+
 ---
 
 ## [1.9.1] - 2026-07-23
