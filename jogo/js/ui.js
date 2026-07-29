@@ -501,6 +501,11 @@ class GameUI {
     toggleHelp() {
         const helpScreen = document.getElementById('help-screen');
         if (helpScreen.classList.contains('hidden')) {
+            // Atualizar versão dinamicamente
+            const versionEl = document.getElementById('game-version');
+            if (versionEl) {
+                versionEl.textContent = SAVE_VERSION || '1.11.0';
+            }
             helpScreen.classList.remove('hidden');
             this.updateTouchControlsVisibility(false);
         } else {
