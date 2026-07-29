@@ -92,7 +92,7 @@ const TIER_CONFIG = {
         mapSize: 180,
         enemyMultiplier: 1.4,
         animalMultiplier: 1.4,
-        children: 8,
+        children: 6,
         prisonDistance: [45, 90]
     }
 };

@@ -277,7 +277,7 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Sistema de **3 tiers** (Baixo/Médio/Alto) detectados automaticamente:
   - **Baixo** (mobile, ≤2 GB RAM, ≤2 núcleos): mapa 80×80, metade das entidades
   - **Médio** (≤4 GB RAM, ≤4 núcleos): mapa 120×120, ~80% das entidades
-  - **Alto** (8 GB+ RAM, muitos núcleos): mapa 180×180, 1.4× entidades, 8 crianças
+  - **Alto** (8 GB+ RAM, muitos núcleos): mapa 180×180, 1.4× entidades, 6 crianças
 - Nova função `applyHardwareConfig()` em `utils.js` que ajusta `GAME_CONFIG` antes da inicialização
 - Detecção usa `navigator.deviceMemory`, `navigator.hardwareConcurrency` e User-Agent
 - Entidades (inimigos/animais) escalam proporcionalmente à área do mapa
