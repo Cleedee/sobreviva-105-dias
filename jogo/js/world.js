@@ -437,7 +437,18 @@ class World {
         this.checkTraps();
         
         // Atualizar crianças
+        const deadChildren = [];
         for (const child of this.children) {
+            // Inicializar felicidade se não existir
+            if (child.happiness === undefined) child.happiness = 100;
+            if (child.messageTimer === undefined) child.messageTimer = 0;
+            if (child.currentMessage === undefined) child.currentMessage = null;
+            
+            child.messageTimer -= deltaTime;
+            if (child.messageTimer <= 0) {
+                child.currentMessage = null;
+            }
+            
             if (child.following) {
                 // Seguir jogador
                 const dist = MathUtils.distance(child.x, child.y, player.x, player.y);
@@ -445,13 +456,69 @@ class World {
                     const angle = Math.atan2(player.y - child.y, player.x - child.x);
                     child.x += Math.cos(angle) * 1.5;
                     child.y += Math.sin(angle) * 1.5;
+                } else if (dist < 50) {
+                    // Ficar um pouco atrás do jogador
+                    const angle = Math.atan2(player.y - child.y, player.x - child.x);
+                    const targetDist = 35;
+                    child.x = player.x - Math.cos(angle) * targetDist;
+                    child.y = player.y - Math.sin(angle) * targetDist;
                 }
                 
                 // Decair status (taxa normal)
-                child.hunger -= 0.1 * deltaTime;
-                child.thirst -= 0.12 * deltaTime;
+                child.hunger -= 0.12 * deltaTime;
+                child.thirst -= 0.15 * deltaTime;
                 child.hunger = MathUtils.clamp(child.hunger, 0, 100);
                 child.thirst = MathUtils.clamp(child.thirst, 0, 100);
+                child.happiness = MathUtils.clamp(child.happiness - 0.02 * deltaTime, 0, 100);
+            } else if (!this.isChildInCabin(child.id)) {
+                // Criança perdida (nem seguindo, nem em cabana) — decair mais rápido
+                child.hunger -= 0.2 * deltaTime;
+                child.thirst -= 0.25 * deltaTime;
+                child.happiness = MathUtils.clamp(child.happiness - 0.05 * deltaTime, 0, 100);
+            }
+            
+            // Emoções baseadas no estado
+            if (child.hunger < 20 || child.thirst < 20) {
+                child.currentMessage = child.messageTimer <= 0 ? '😫' : child.currentMessage;
+                child.messageTimer = child.messageTimer <= 0 ? 2 : child.messageTimer;
+                child.happiness = MathUtils.clamp(child.happiness - 0.1 * deltaTime, 0, 100);
+            } else if (child.hunger < 50 || child.thirst < 50) {
+                child.currentMessage = child.messageTimer <= 0 ? '😐' : child.currentMessage;
+                child.messageTimer = child.messageTimer <= 0 ? 3 : child.messageTimer;
+            } else if (child.happiness > 80 && Math.random() < 0.001) {
+                child.currentMessage = '😊';
+                child.messageTimer = 2;
+            }
+            
+            // Verificar morte por fome/sede
+            if (child.hunger <= 0 || child.thirst <= 0) {
+                child.hunger = MathUtils.clamp(child.hunger, 0, 100);
+                child.thirst = MathUtils.clamp(child.thirst, 0, 100);
+                
+                // Só morre se ficar com fome/sede em 0 por mais de 5 segundos
+                if (child.starveTimer === undefined) child.starveTimer = 0;
+                child.starveTimer += deltaTime;
+                
+                if (child.starveTimer >= 5) {
+                    deadChildren.push(child);
+                    if (game && game.ui) {
+                        game.ui.showMessage(`💀 ${child.name} não resistiu...`, 4);
+                    }
+                }
+            } else {
+                child.starveTimer = 0;
+            }
+        }
+        
+        // Remover crianças mortas
+        for (const dead of deadChildren) {
+            this.children = this.children.filter(c => c.id !== dead.id);
+            if (player) {
+                player.childrenFollowing = player.childrenFollowing.filter(c => c.id !== dead.id);
+            }
+            // Remover de cabanas
+            for (const key of Object.keys(this.cabinChildren)) {
+                this.cabinChildren[key] = this.cabinChildren[key].filter(id => id !== dead.id);
             }
         }
         
@@ -1116,7 +1183,8 @@ class World {
         ctx.save();
         
         // Corpo
-        ctx.fillStyle = '#f472b6';
+        const bodyColor = child.hunger < 20 || child.thirst < 20 ? '#e2a8b8' : '#f472b6';
+        ctx.fillStyle = bodyColor;
         ctx.fillRect(screenX - 8, screenY - 4, 16, 16);
         
         // Cabeça
@@ -1135,6 +1203,24 @@ class World {
         if (child.following) {
             ctx.fillStyle = '#22c55e';
             ctx.fillText('♥', screenX, screenY - 24);
+        }
+        
+        // Bolha de emoção/status
+        if (child.currentMessage) {
+            const bubbleY = screenY - (child.following ? 32 : 26);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.arc(screenX, bubbleY, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(screenX, bubbleY, 10, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#000';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(child.currentMessage, screenX, bubbleY + 4);
         }
         
         ctx.restore();

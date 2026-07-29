@@ -342,6 +342,16 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ### 🐛 Correções
 
+#### 👧 Lógica Completa das Crianças
+- **Alimentar crianças**: interaja com uma criança seguindo para dar comida/bebida do inventário
+- **Morte por abandono**: se fome ou sede chegar a 0 por mais de 5 segundos, a criança morre
+- **Devolver à cela**: interaja com uma cela vazia (aberta) tendo uma criança seguindo para trancá-la novamente
+- **Emoções visuais**: bolha de emoção acima da criança (😊 feliz, 😐 com fome/sede, 😫 faminta/sedenta)
+- **Cor do corpo** muda quando a criança está debilitada
+- **Status mais detalhado**: ao interagir sem comida, mostra fome/sede atuais
+- **Criança perdida**: se solta no mapa (nem seguindo, nem em cabana), decai mais rápido
+- **Save/load** dos novos atributos (happiness, starveTimer)
+
 #### 🚧 Cercas não eram salvas
 - `TILE_TYPES` não possuía entrada `FENCE`, então ao carregar o save o tile virava grama (fallback)
 - Adicionado `TILE_TYPES.FENCE` (`id: 43`) em `world.js`

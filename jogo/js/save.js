@@ -153,7 +153,9 @@ class SaveManager {
             following: c.following,
             rescued: c.rescued,
             x: c.x,
-            y: c.y
+            y: c.y,
+            happiness: c.happiness !== undefined ? c.happiness : 100,
+            starveTimer: c.starveTimer || 0
         }));
 
         // Serializar interativos
@@ -437,12 +439,12 @@ class SaveManager {
                 following: cData.following,
                 rescued: cData.rescued,
                 x: cData.x,
-                y: cData.y
+                y: cData.y,
+                happiness: cData.happiness !== undefined ? cData.happiness : 100,
+                starveTimer: cData.starveTimer || 0,
+                messageTimer: 0,
+                currentMessage: null
             };
-            // Restaurar referências de child em prisons
-            if (child.rescued && !child.following) {
-                // Criança resgatada mas não seguindo - pode estar em cabana
-            }
             return child;
         });
 

@@ -382,6 +382,19 @@ class Player {
                     this.children.push(child);
                     tile.child = null;
                     return { success: true, message: `Resgatou ${child.name}!`, rescued: child };
+                } else if (!tile.locked && !tile.child) {
+                    // Cela vazia — devolver criança que está seguindo
+                    if (this.childrenFollowing.length > 0) {
+                        const childToReturn = this.childrenFollowing[0];
+                        childToReturn.following = false;
+                        childToReturn.x = x * GAME_CONFIG.TILE_SIZE + 8;
+                        childToReturn.y = y * GAME_CONFIG.TILE_SIZE + 8;
+                        this.childrenFollowing = this.childrenFollowing.filter(c => c.id !== childToReturn.id);
+                        tile.child = childToReturn;
+                        tile.locked = true; // cela tranca novamente
+                        return { success: true, message: `🔒 ${childToReturn.name} foi devolvida à cela!` };
+                    }
+                    return { success: false, message: 'Cela vazia. Nenhuma criança seguindo.' };
                 }
                 return { success: false, message: 'Cela trancada!' };
                 
@@ -431,22 +444,67 @@ class Player {
     }
     
     interactWithEntities(world) {
+        const playerCenter = this.getCenter();
+        
         // Verificar crianças próximas
         for (const child of world.children) {
-            const dist = MathUtils.distance(
-                this.x + this.width / 2, this.y + this.height / 2,
-                child.x, child.y
-            );
+            const dist = MathUtils.distance(playerCenter.x, playerCenter.y, child.x, child.y);
             
-            if (dist < 50 && !child.following) {
-                child.following = true;
-                this.childrenFollowing.push(child);
-                audioManager.playChildRescue();
-                return { success: true, message: `${child.name} está seguindo você!` };
+            if (dist < 50) {
+                if (!child.following && !this.isChildInCabin(child.id, world)) {
+                    // Criança perdida — resgatar para seguir
+                    child.following = true;
+                    this.childrenFollowing.push(child);
+                    audioManager.playChildRescue();
+                    return { success: true, message: `${child.name} está seguindo você!` };
+                } else if (child.following) {
+                    // Criança seguindo — alimentar ou ver status
+                    return this.interactWithFollowingChild(child, world);
+                }
             }
         }
         
         return null;
+    }
+    
+    interactWithFollowingChild(child, world) {
+        // Verificar se tem comida no inventário
+        const foodSlots = this.inventory.slots
+            .map((s, i) => ({ slot: s, index: i }))
+            .filter(({ slot }) => slot && (slot.type === 'food' || slot.type === 'drink'));
+        
+        if (foodSlots.length > 0) {
+            // Pega o primeiro item de comida/bebida
+            const { slot, index } = foodSlots[0];
+            
+            if (slot.type === 'food') {
+                const restore = slot.hungerRestore || 10;
+                child.hunger = MathUtils.clamp(child.hunger + restore, 0, 100);
+                child.happiness = MathUtils.clamp((child.happiness || 100) + 5, 0, 100);
+                this.inventory.removeItem(index);
+                audioManager.playEat();
+                return { success: true, message: `🍖 Alimentou ${child.name}! (+${restore} fome)` };
+            } else if (slot.type === 'drink') {
+                const restore = slot.thirstRestore || 10;
+                child.thirst = MathUtils.clamp(child.thirst + restore, 0, 100);
+                child.happiness = MathUtils.clamp((child.happiness || 100) + 5, 0, 100);
+                this.inventory.removeItem(index);
+                audioManager.playDrink();
+                return { success: true, message: `💧 ${child.name} bebeu! (+${restore} sede)` };
+            }
+        }
+        
+        // Sem comida — mostrar status
+        const hungerStatus = child.hunger > 70 ? '😊 satisfeita' : child.hunger > 40 ? '😐 com fome' : '😫 faminta';
+        const thirstStatus = child.thirst > 70 ? '💧 hidratada' : child.thirst > 40 ? '😐 com sede' : '🥵 sedenta';
+        return { success: true, message: `${child.name}: ${hungerStatus}, ${thirstStatus} (sem comida para dar)` };
+    }
+    
+    isChildInCabin(childId, world) {
+        for (const key of Object.keys(world.cabinChildren)) {
+            if (world.cabinChildren[key].includes(childId)) return true;
+        }
+        return false;
     }
     
     hasTool(toolType) {

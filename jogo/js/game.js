@@ -322,7 +322,16 @@ class Game {
                     prompt = `${action} para entrar na cabana`;
                     break;
                 case 'prison':
-                    prompt = `${action} para interagir com cela`;
+                    const tile = this.world.getTile(
+                        Math.floor((this.player.getCenter().x) / GAME_CONFIG.TILE_SIZE),
+                        Math.floor((this.player.getCenter().y) / GAME_CONFIG.TILE_SIZE)
+                    );
+                    // Verificar se é uma cela vazia com criança seguindo
+                    if (tile && !tile.locked && !tile.child && this.player.childrenFollowing.length > 0) {
+                        prompt = `${action} para devolver ${this.player.childrenFollowing[0].name} à cela`;
+                    } else {
+                        prompt = `${action} para interagir com cela`;
+                    }
                     break;
                 case 'key':
                     prompt = `${action} para pegar a chave`;
@@ -331,7 +340,20 @@ class Game {
                     prompt = `${action} para verificar cerca`;
                     break;
                 case 'child':
-                    prompt = `${action} para resgatar criança`;
+                    // Verificar se alguma criança próxima está seguindo
+                    const nearbyChild = this.world.children.find(c => {
+                        const dist = MathUtils.distance(
+                            this.player.getCenter().x, this.player.getCenter().y,
+                            c.x, c.y
+                        );
+                        return dist < 50;
+                    });
+                    if (nearbyChild && nearbyChild.following) {
+                        const hasFood = this.player.inventory.slots.some(s => s && (s.type === 'food' || s.type === 'drink'));
+                        prompt = `${action} para ${hasFood ? 'alimentar' : 'ver'} ${nearbyChild.name}`;
+                    } else {
+                        prompt = `${action} para resgatar criança`;
+                    }
                     break;
                 default:
                     prompt = `${action} para interagir`;
