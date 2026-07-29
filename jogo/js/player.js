@@ -51,6 +51,12 @@ class Player {
             body: null   // casaco/armadura
         };
         
+        // Canoa
+        this.isInCanoe = false;
+        this.canoeX = 0;
+        this.canoeY = 0;
+        this.canoeMoveCooldown = 0;
+        
         // Frio da noite
         this.coldDamageTimer = 0;
     }
@@ -73,11 +79,20 @@ class Player {
             }
         }
         
-        // Aplicar movimento com colisão
-        this.moveWithCollision(world, deltaTime);
+        if (this.isInCanoe) {
+            // Movimento em canoa — só sobre água, com cooldown
+            this.canoeMoveCooldown -= deltaTime;
+            if (this.canoeMoveCooldown <= 0 && (movement.x !== 0 || movement.y !== 0)) {
+                this.moveCanoe(movement.x, movement.y, world);
+                this.canoeMoveCooldown = 0.25; // 4 tiles/segundo
+            }
+        } else {
+            // Aplicar movimento com colisão
+            this.moveWithCollision(world, deltaTime);
+        }
         
         // Sons de passos
-        if (this.isMoving) {
+        if (this.isMoving && !this.isInCanoe) {
             audioManager.playFootstep();
         }
         
@@ -160,6 +175,8 @@ class Player {
             for (let tx = tileX1; tx <= tileX2; tx++) {
                 const tile = world.getTile(tx, ty);
                 if (tile && tile.solid) {
+                    // Se estiver em canoa, água não bloqueia
+                    if (this.isInCanoe && tile.type === 'water') continue;
                     return true;
                 }
             }
@@ -223,6 +240,27 @@ class Player {
         }
         
         const tile = world.getTile(checkX, checkY);
+        
+        // Se estiver em canoa, desembarcar (prioridade máxima)
+        if (this.isInCanoe) {
+            return this.disembarkCanoe(world);
+        }
+        
+        // Tentar colocar/entrar em canoa na água (antes do interactable para não beber água)
+        if (tile && tile.type === 'water') {
+            if (world.hasCanoeAt(checkX, checkY)) {
+                // Re-embarcar em canoa existente
+                return this.embarkCanoe(world, checkX, checkY);
+            }
+            if (this.inventory.hasItem('canoe')) {
+                const canoeIdx = this.inventory.slots.findIndex(s => s && s.id === 'canoe');
+                if (canoeIdx !== -1) {
+                    this.inventory.removeItem(canoeIdx);
+                    return this.embarkCanoe(world, checkX, checkY);
+                }
+            }
+            // Se não tem canoa nem canoa existente, cai no interactable (beber água)
+        }
         
         if (tile && tile.interactable) {
             return this.interactWithTile(tile, checkX, checkY, world);
@@ -438,6 +476,69 @@ class Player {
         return false;
     }
     
+    // === Canoa ===
+    
+    embarkCanoe(world, tileX, tileY) {
+        this.isInCanoe = true;
+        this.canoeX = tileX;
+        this.canoeY = tileY;
+        world.placeCanoe(tileX, tileY);
+        this.x = tileX * GAME_CONFIG.TILE_SIZE + 4;
+        this.y = tileY * GAME_CONFIG.TILE_SIZE + 4;
+        return { success: true, message: '🛶 Entrou na canoa!' };
+    }
+    
+    disembarkCanoe(world) {
+        // Procurar tile sólido adjacente para desembarcar
+        const tileX = Math.floor((this.x + this.width / 2) / GAME_CONFIG.TILE_SIZE);
+        const tileY = Math.floor((this.y + this.height / 2) / GAME_CONFIG.TILE_SIZE);
+        
+        const directions = [
+            { dx: 0, dy: -1 }, // cima
+            { dx: 0, dy: 1 },  // baixo
+            { dx: -1, dy: 0 }, // esquerda
+            { dx: 1, dy: 0 }   // direita
+        ];
+        
+        for (const dir of directions) {
+            const nx = tileX + dir.dx;
+            const ny = tileY + dir.dy;
+            const tile = world.getTile(nx, ny);
+            if (tile && !tile.solid && tile.type !== 'water') {
+                // Canoa fica no lugar para reuso
+                this.isInCanoe = false;
+                this.canoeMoveCooldown = 0;
+                this.x = nx * GAME_CONFIG.TILE_SIZE + 4;
+                this.y = ny * GAME_CONFIG.TILE_SIZE + 4;
+                return { success: true, message: '🚶 Desembarcou da canoa!' };
+            }
+        }
+        
+        return { success: false, message: 'Sem espaço para desembarcar!' };
+    }
+    
+    moveCanoe(dx, dy, world) {
+        const tileX = Math.floor((this.x + this.width / 2) / GAME_CONFIG.TILE_SIZE);
+        const tileY = Math.floor((this.y + this.height / 2) / GAME_CONFIG.TILE_SIZE);
+        
+        if (dx === 0 && dy === 0) return;
+        
+        const newTX = tileX + (dx > 0 ? 1 : dx < 0 ? -1 : 0);
+        const newTY = tileY + (dy > 0 ? 1 : dy < 0 ? -1 : 0);
+        
+        const tile = world.getTile(newTX, newTY);
+        if (tile && tile.type === 'water') {
+            // Atualizar posição da canoa no mapa
+            world.removeCanoe(tileX, tileY);
+            world.placeCanoe(newTX, newTY);
+            this.canoeX = newTX;
+            this.canoeY = newTY;
+            this.x = newTX * GAME_CONFIG.TILE_SIZE + 4;
+            this.y = newTY * GAME_CONFIG.TILE_SIZE + 4;
+            this.isMoving = true;
+        }
+    }
+    
     // Receber dano
     takeDamage(amount) {
         if (this.isInvincible) return;
@@ -545,6 +646,20 @@ class Player {
         ctx.save();
         
         // Corpo do jogador
+        if (this.isInCanoe) {
+            // Desenhar canoa ao redor do jogador
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.moveTo(screenX - 4, screenY + 24);
+            ctx.lineTo(screenX - 2, screenY + 10);
+            ctx.lineTo(screenX + this.width + 2, screenY + 10);
+            ctx.lineTo(screenX + this.width + 4, screenY + 24);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = '#A0522D';
+            ctx.fillRect(screenX - 2, screenY + 10, this.width + 4, 3);
+        }
+        
         ctx.fillStyle = '#4a90d9';
         ctx.fillRect(screenX + 4, screenY + 8, this.width - 8, this.height - 8);
         

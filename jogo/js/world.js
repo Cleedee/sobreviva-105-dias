@@ -51,6 +51,9 @@ class World {
         // Chaves espalhadas pelo mapa: { x, y, prisonNumber, collected }
         this.keys = [];
         
+        // Canoas colocadas no mapa: "x,y" → true
+        this.canoes = {};
+        
         // Campamento inicial
         this.campX = 0;
         this.campY = 0;
@@ -601,6 +604,51 @@ class World {
             ctx.fillStyle = '#aaa';
             ctx.fillRect(screenX + 6, screenY + 18, 3, 4);
             ctx.fillRect(screenX + 23, screenY + 18, 3, 4);
+            ctx.restore();
+        }
+    }
+    
+    // === Canoas ===
+    
+    placeCanoe(tileX, tileY) {
+        const key = this.cabinKey(tileX, tileY);
+        this.canoes[key] = true;
+    }
+    
+    removeCanoe(tileX, tileY) {
+        const key = this.cabinKey(tileX, tileY);
+        delete this.canoes[key];
+    }
+    
+    hasCanoeAt(tileX, tileY) {
+        return this.canoes[this.cabinKey(tileX, tileY)] || false;
+    }
+    
+    // Renderizar canoas
+    renderCanoes(ctx, camera) {
+        for (const key of Object.keys(this.canoes)) {
+            const [x, y] = key.split(',').map(Number);
+            const screenX = x * GAME_CONFIG.TILE_SIZE - camera.x;
+            const screenY = y * GAME_CONFIG.TILE_SIZE - camera.y;
+            
+            if (screenX < -50 || screenX > camera.width + 50 ||
+                screenY < -50 || screenY > camera.height + 50) {
+                continue;
+            }
+            
+            ctx.save();
+            // Casco da canoa
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.moveTo(screenX + 2, screenY + 22);
+            ctx.lineTo(screenX + 6, screenY + 10);
+            ctx.lineTo(screenX + 26, screenY + 10);
+            ctx.lineTo(screenX + 30, screenY + 22);
+            ctx.closePath();
+            ctx.fill();
+            // Borda
+            ctx.fillStyle = '#A0522D';
+            ctx.fillRect(screenX + 6, screenY + 10, 20, 3);
             ctx.restore();
         }
     }

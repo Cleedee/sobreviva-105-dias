@@ -292,7 +292,13 @@ class Game {
             
             switch (nearbyType) {
                 case 'water':
-                    prompt = `${action} para beber água`;
+                    if (this.player.isInCanoe) {
+                        prompt = `${action} para desembarcar`;
+                    } else if (this.player.inventory.hasItem('canoe')) {
+                        prompt = `${action} para colocar canoa`;
+                    } else {
+                        prompt = `${action} para beber água`;
+                    }
                     break;
                 case 'tree':
                     prompt = `${action} para cortar árvore`;
@@ -353,6 +359,9 @@ class Game {
         
         // Renderizar armadilhas
         this.world.renderTraps(this.ctx, this.camera);
+        
+        // Renderizar canoas
+        this.world.renderCanoes(this.ctx, this.camera);
         
         // Renderizar inimigos
         this.world.renderEnemies(this.ctx, this.camera, this.timeManager);

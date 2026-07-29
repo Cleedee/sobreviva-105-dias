@@ -259,6 +259,59 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.10.0] - 2026-07-29
+
+### ✨ Novas Funcionalidades
+
+#### 🛶 Canoa
+- Nova **Canoa** que permite atravessar tiles de água
+- **Receita de crafting**: 5 Madeira + 3 Fibra → 1 Canoa
+- **Uso**: segure a canoa no inventário e interaja com um tile de água para colocá-la
+- Ao colocar a canoa, o jogador **embarca** automaticamente
+- **Movimento**: WASD move a canoa sobre a água (1 tile por ação, como andar)
+- **Desembarque**: interaja novamente (E) para desembarcar em um tile sólido adjacente
+- A canoa permanece no local onde foi deixada até ser usada novamente
+- Canoas aparecem como um pequeno barco de madeira no tile de água
+
+#### 🔧 Alterações Técnicas
+
+##### `js/inventory.js`
+- Novo item `CANOE` (id: `canoe`, tipo: `vehicle`, empilhável: não)
+
+##### `js/crafting.js`
+- Nova receita `canoe`: 5 Madeira + 3 Fibra → 1 Canoa
+
+##### `js/world.js`
+- Array `this.canoes`: mapa de canoas ativas no mundo (`"x,y"` → dono ou `true`)
+- `placeCanoe(x, y)`: coloca canoa em tile de água
+- `removeCanoe(x, y)`: remove canoa do tile
+- `hasCanoeAt(x, y)`: verifica se há canoa em uma posição
+- `renderCanoes(ctx, camera)`: renderiza canoas nos tiles de água
+- Tile `WATER` agora permite travessia quando jogador está de canoa
+
+##### `js/player.js`
+- `isInCanoe`: boolean indicando se o jogador está embarcado
+- `canoeX`, `canoeY`: posição da canoa atual
+- `embarkCanoe(world, x, y)`: embarca na canoa
+- `disembarkCanoe(world)`: desembarca em tile sólido adjacente
+- `moveCanoe(dx, dy, world)`: move a canoa sobre água
+- Interagir com água tendo canoa no inventário: coloca a canoa e embarca
+- Interagir com água já tendo canoa: desembarca
+
+##### `js/game.js`
+- `update()`: processa movimento da canoa quando `player.isInCanoe`
+- Verificação de colisão adaptada para canoa (só pode mover sobre água)
+- Prompt contextual para água: mostra "Pressione **E** para usar canoa" quando tem canoa no inventário
+
+##### `js/save.js`
+- Serialização e restauração de canoas ativas no mundo
+- Salva estado `isInCanoe` e posição da canoa do jogador
+
+##### `sw.js`
+- Cache version bump: `sobreviva-105-v6` → `sobreviva-105-v7`
+
+---
+
 ## [1.9.1] - 2026-07-23
 
 ### 🐛 Correções

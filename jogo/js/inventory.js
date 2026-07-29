@@ -295,6 +295,14 @@ const ITEMS = {
         type: 'building',
         stackable: false
     },
+    CANOE: {
+        id: 'canoe',
+        name: '🛶 Canoa',
+        description: 'Atravessa lagos e rios. Coloque na água para usar.',
+        type: 'vehicle',
+        stackable: false
+    },
+    
     CAMPFIRE: {
         id: 'campfire_item',
         name: '🔥 Fogueira',

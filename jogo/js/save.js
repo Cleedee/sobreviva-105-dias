@@ -4,7 +4,7 @@
  */
 
 const SAVE_KEY = 'sobreviva_105_save';
-const SAVE_VERSION = '1.8.0';
+const SAVE_VERSION = '1.10.0';
 const AUTO_SAVE_INTERVAL = 300000; // 5 minutos
 
 class SaveManager {
@@ -83,7 +83,10 @@ class SaveManager {
                 selectedSlot: player.inventory.selectedSlot,
                 slots: slots
             },
-            followingChildIds: followingIds
+            followingChildIds: followingIds,
+            isInCanoe: player.isInCanoe,
+            canoeX: player.canoeX,
+            canoeY: player.canoeY
         };
     }
 
@@ -207,7 +210,11 @@ class SaveManager {
             keys: keys,
             cabinStorage: cabinStorage,
             cabinChildren: cabinChildren,
-            fences: { ...world.fences }
+            fences: { ...world.fences },
+            canoes: Object.keys(world.canoes).reduce((acc, key) => {
+                acc[key] = world.canoes[key];
+                return acc;
+            }, {})
         };
     }
 
@@ -262,6 +269,11 @@ class SaveManager {
         player.isInvincible = pData.isInvincible;
         player.invincibleTimer = pData.invincibleTimer;
         player.attackCooldown = pData.attackCooldown;
+        
+        // Restaurar estado da canoa
+        player.isInCanoe = pData.isInCanoe || false;
+        player.canoeX = pData.canoeX || 0;
+        player.canoeY = pData.canoeY || 0;
 
         // Restaurar item equipado
         if (pData.equippedItemId && ITEMS[pData.equippedItemId.toUpperCase()]) {
@@ -434,6 +446,9 @@ class SaveManager {
 
         // Restaurar crianças em cabanas
         world.cabinChildren = wData.cabinChildren || {};
+        
+        // Restaurar canoas
+        world.canoes = wData.canoes || {};
     }
 
     // === AUTO SAVE ===

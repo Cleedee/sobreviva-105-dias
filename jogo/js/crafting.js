@@ -186,6 +186,17 @@ const RECIPES = [
         ]
     },
     {
+        id: 'canoe',
+        name: '🛶 Canoa',
+        description: 'Atravessa lagos e rios. Coloque na água para navegar.',
+        result: { ...ITEMS.CANOE },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'wood', quantity: 5, name: '🪵 Madeira' },
+            { itemId: 'fiber', quantity: 3, name: '🌿 Fibra' }
+        ]
+    },
+    {
         id: 'campfire',
         name: '🔥 Fogueira',
         description: 'Aquece durante a noite e cozinha alimentos. Coloque no chão.',
