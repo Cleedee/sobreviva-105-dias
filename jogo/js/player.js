@@ -472,7 +472,7 @@ class Player {
     interactWithFollowingChild(child, world) {
         // Se criança tem bolsa, abrir interface da bolsa
         if (child.hasBag) {
-            return { success: true, child: child, childBagOpen: true };
+            return { success: true, message: `🎒 Saco da ${child.name}`, child: child, childBagOpen: true };
         }
         
         // Verificar se tem uma Small Bag no inventário para dar à criança

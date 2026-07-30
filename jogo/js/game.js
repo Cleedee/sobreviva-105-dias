@@ -152,26 +152,31 @@ class Game {
     }
     
     update(dt) {
-        // Pausa
+        // Pausa sempre funciona (sai de qualquer tela)
         if (input.isPause()) {
             this.togglePause();
             return;
         }
         
-        // Inventario
-        if (input.isInventory()) {
-            this.ui.toggleInventory();
+        // Telas modais que só fecham via botão (criança/cabana)
+        if (this.childBagUI.isOpen || this.cabinUI.isOpen) return;
+        
+        // Se pause, inventário ou crafting aberto, não processar jogo
+        if (this.ui.pauseOpen) return;
+        
+        if (this.ui.inventoryOpen) {
+            if (input.isInventory()) { this.ui.toggleInventory(); return; }
             return;
         }
         
-        // Crafting
-        if (input.isCrafting()) {
-            this.crafting.toggle();
+        if (this.crafting.isOpen) {
+            if (input.isCrafting()) { this.crafting.toggle(); return; }
             return;
         }
         
-        // Se inventário, pausa, crafting ou cabana aberto, não atualizar jogo
-        if (this.ui.inventoryOpen || this.ui.pauseOpen || this.crafting.isOpen || this.cabinUI.isOpen || this.childBagUI.isOpen) return;
+        // Nenhuma UI aberta — alternar normalmente
+        if (input.isInventory()) { this.ui.toggleInventory(); return; }
+        if (input.isCrafting()) { this.crafting.toggle(); return; }
         
         // Atualizar tempo
         this.timeManager.update(dt);
