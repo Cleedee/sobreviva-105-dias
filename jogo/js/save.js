@@ -305,9 +305,15 @@ class SaveManager {
         player.inventory.selectedSlot = pData.inventory.selectedSlot;
         player.inventory.slots = pData.inventory.slots.map(slotData => {
             if (!slotData) return null;
-            const itemDef = ITEMS[slotData.id.toUpperCase()];
+            let itemDef;
+            if (slotData.id.startsWith('key_')) {
+                itemDef = ITEMS.KEY;
+            } else {
+                itemDef = ITEMS[slotData.id.toUpperCase()];
+            }
             if (!itemDef) return null;
             const slot = { ...itemDef, quantity: slotData.quantity };
+            slot.id = slotData.id;
             if (slotData.durability !== undefined) slot.durability = slotData.durability;
             if (slotData.prisonNumber !== undefined) slot.prisonNumber = slotData.prisonNumber;
             return slot;
@@ -501,9 +507,15 @@ class SaveManager {
         world.cabinStorage = {};
         for (const key of Object.keys(wData.cabinStorage || {})) {
             world.cabinStorage[key] = (wData.cabinStorage[key] || []).map(itemData => {
-                const itemDef = ITEMS[itemData.id.toUpperCase()];
+                let itemDef;
+                if (itemData.id.startsWith('key_')) {
+                    itemDef = ITEMS.KEY;
+                } else {
+                    itemDef = ITEMS[itemData.id.toUpperCase()];
+                }
                 if (!itemDef) return null;
                 const item = { ...itemDef, quantity: itemData.quantity };
+                item.id = itemData.id;
                 if (itemData.durability !== undefined) item.durability = itemData.durability;
                 return item;
             }).filter(Boolean);

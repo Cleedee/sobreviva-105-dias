@@ -268,6 +268,11 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - **Causa**: chaves eram criadas com `id: "key_N"` (ex: `key_1`) em `world.js`, mas o código buscava por `id === "key"` — nunca encontrava
 - **Correção**: agora busca por `s.type === 'key' && s.prisonNumber === tile.prisonNumber`
 
+#### 💾 Chaves não eram restauradas no Save/Load
+- `save.js`: `restorePlayer()` tentava `ITEMS[slotData.id.toUpperCase()]` com `"KEY_1"`, que não existe — chaves eram descartadas silenciosamente
+- `save.js`: mesmo problema em `cabinStorage`
+- **Correção**: itens com `id` começando com `key_` usam `ITEMS.KEY` como definição base e preservam o `id` original
+
 ---
 
 ## [1.11.0] - 2026-07-29
