@@ -367,15 +367,15 @@ class Player {
                 
             case 'prison':
                 // Tentar abrir cela
-                if (tile.locked && this.inventory.hasItem('key')) {
-                    // Verificar se a chave é a correta
-                    const keyItem = this.inventory.slots.find(s => s && s.id === 'key');
-                    if (keyItem && (keyItem.prisonNumber === -1 || keyItem.prisonNumber === tile.prisonNumber)) {
+                if (tile.locked) {
+                    // Procurar chave com prisonNumber correspondente
+                    const keySlot = this.inventory.slots.findIndex(s => s && s.type === 'key' && s.prisonNumber === tile.prisonNumber);
+                    if (keySlot !== -1) {
                         tile.locked = false;
-                        this.inventory.removeItem(this.inventory.slots.indexOf(keyItem));
+                        this.inventory.removeItem(keySlot);
                         return { success: true, message: 'Cela aberta!', child: tile.child };
                     }
-                    return { success: false, message: 'Chave errada!' };
+                    return { success: false, message: 'Você não tem a chave certa!' };
                 } else if (!tile.locked && tile.child) {
                     // Resgatar criança
                     const child = tile.child;

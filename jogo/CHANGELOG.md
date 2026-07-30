@@ -259,6 +259,17 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.11.1] - 2026-07-30
+
+### 🐛 Correções
+
+#### 🔑 Abertura de Celas com Chave
+- `player.js`: consertada lógica que impedia abrir celas mesmo com a chave certa
+- **Causa**: chaves eram criadas com `id: "key_N"` (ex: `key_1`) em `world.js`, mas o código buscava por `id === "key"` — nunca encontrava
+- **Correção**: agora busca por `s.type === 'key' && s.prisonNumber === tile.prisonNumber`
+
+---
+
 ## [1.11.0] - 2026-07-29
 
 ### ✨ Novas Funcionalidades
