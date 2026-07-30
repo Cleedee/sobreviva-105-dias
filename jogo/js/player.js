@@ -379,6 +379,8 @@ class Player {
                 } else if (!tile.locked && tile.child) {
                     // Resgatar criança
                     const child = tile.child;
+                    child.x = x * GAME_CONFIG.TILE_SIZE + 8;
+                    child.y = y * GAME_CONFIG.TILE_SIZE + 8;
                     this.children.push(child);
                     tile.child = null;
                     return { success: true, message: `Resgatou ${child.name}!`, rescued: child };

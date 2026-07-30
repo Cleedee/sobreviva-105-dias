@@ -259,6 +259,16 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.11.3] - 2026-07-30
+
+### 🐛 Correções
+
+#### 👶 Criança resgatada não aparecia no mapa
+- `player.js`: ao resgatar criança da cela, `child.x` e `child.y` não eram definidos — criança ficava invisível e não era possível interagir para fazê-la seguir
+- **Correção**: `child.x` e `child.y` agora são definidos com a posição da cela ao resgatar
+
+---
+
 ## [1.11.2] - 2026-07-30
 
 ### 🐛 Correções
