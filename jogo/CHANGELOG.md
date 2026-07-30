@@ -275,6 +275,8 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - `save.js`: estado da bolsa (`hasBag`, `storage`) é salvo/carregado
 - `save.js`: **Bugfix** — `restore()` agora repovoa `player.children` e `player.childrenFollowing` após `restoreWorld`
 - `cabin.js`: **Bugfix** — `renderChildrenFollowing()` também consulta `player.childrenFollowing` como fallback
+- `game.js`: **Bugfix** — reordena verificação de UI; `childBagUI`/`cabinUI` bloqueiam antes de `isInventory`/`isCrafting`, impedindo inventário de abrir sobre a bolsa e travar o movimento ao fechar
+- `player.js`: **Bugfix** — mensagem ao abrir saco da criança não fica `undefined`
 
 ---
 
