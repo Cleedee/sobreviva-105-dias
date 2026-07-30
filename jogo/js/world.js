@@ -472,6 +472,28 @@ class World {
                 child.hunger = MathUtils.clamp(child.hunger, 0, 100);
                 child.thirst = MathUtils.clamp(child.thirst, 0, 100);
                 child.happiness = MathUtils.clamp(child.happiness - 0.02 * deltaTime, 0, 100);
+                
+                // Auto-consumir da própria bolsa se tiver
+                if (child.hasBag && child.storage && child.storage.length > 0) {
+                    if (child.hunger < 50) {
+                        const foodIdx = child.storage.findIndex(s => s && s.type === 'food');
+                        if (foodIdx !== -1) {
+                            const item = child.storage[foodIdx];
+                            child.hunger = MathUtils.clamp(child.hunger + (item.hungerRestore || 10) * 0.5, 0, 100);
+                            item.quantity -= 1;
+                            if (item.quantity <= 0) child.storage.splice(foodIdx, 1);
+                        }
+                    }
+                    if (child.thirst < 50) {
+                        const drinkIdx = child.storage.findIndex(s => s && s.type === 'drink');
+                        if (drinkIdx !== -1) {
+                            const item = child.storage[drinkIdx];
+                            child.thirst = MathUtils.clamp(child.thirst + (item.thirstRestore || 10) * 0.5, 0, 100);
+                            item.quantity -= 1;
+                            if (item.quantity <= 0) child.storage.splice(drinkIdx, 1);
+                        }
+                    }
+                }
             } else if (!this.isChildInCabin(child.id)) {
                 // Criança perdida (nem seguindo, nem em cabana) — decair mais rápido
                 child.hunger -= 0.2 * deltaTime;

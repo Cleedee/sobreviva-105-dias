@@ -271,6 +271,7 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - `player.js`: interaja com uma criança seguindo e, se tiver uma **Bolsa Pequena** no inventário, pode dar para ela
 - A criança passa a ter **5 slots** para carregar itens
 - Interaja novamente para abrir a **interface da bolsa** da criança (Guardar/Retirar itens)
+- `world.js`: crianças seguindo com bolsa **consomem automaticamente** comida/água da própria bolsa quando fome < 50 ou sede < 50
 - `save.js`: estado da bolsa (`hasBag`, `storage`) é salvo/carregado
 
 ---
