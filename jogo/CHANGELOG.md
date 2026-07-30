@@ -259,6 +259,16 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.11.2] - 2026-07-30
+
+### 🐛 Correções
+
+#### 👧 Crianças dentro das celas perdidas no Save/Load
+- `save.js`: crianças não resgatadas (`tile.child`) só salvavam o ID, mas no load tentavam `world.children.find()` — como nunca foram resgatadas, não estavam lá
+- **Correção**: novo campo `prisonChildren` no save com dados completos das crianças nas celas; no load, se não encontrar em `world.children`, cria o objeto a partir do `prisonChildren`
+
+---
+
 ## [1.11.1] - 2026-07-30
 
 ### 🐛 Correções

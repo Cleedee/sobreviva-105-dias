@@ -202,6 +202,23 @@ class SaveManager {
             cabinChildren[key] = [...world.cabinChildren[key]];
         }
 
+        // Serializar crianças dentro das celas (não resgatadas)
+        const prisonChildren = {};
+        for (let y = 0; y < world.height; y++) {
+            for (let x = 0; x < world.width; x++) {
+                const t = world.tiles[y][x];
+                if (t && t.type === 'prison' && t.child) {
+                    prisonChildren[`${x},${y}`] = {
+                        id: t.child.id,
+                        name: t.child.name,
+                        health: t.child.health,
+                        hunger: t.child.hunger,
+                        thirst: t.child.thirst
+                    };
+                }
+            }
+        }
+
         return {
             width: world.width,
             height: world.height,
@@ -213,6 +230,7 @@ class SaveManager {
             enemies: enemies,
             animals: animals,
             children: children,
+            prisonChildren: prisonChildren,
             interactables: interactables,
             activeTraps: activeTraps,
             keys: keys,
@@ -456,11 +474,24 @@ class SaveManager {
 
         // Restaurar child references em prisons (formato otimizado)
         const tileExtras = wData.tileExtras || {};
+        const prisonChildren = wData.prisonChildren || {};
         for (const key of Object.keys(tileExtras)) {
             const extra = tileExtras[key];
             if (extra.c !== undefined) {
                 const [x, y] = key.split(',').map(Number);
-                const child = world.children.find(c => c.id === extra.c);
+                let child = world.children.find(c => c.id === extra.c);
+                if (!child && prisonChildren[key]) {
+                    const pc = prisonChildren[key];
+                    child = {
+                        id: pc.id,
+                        name: pc.name,
+                        health: pc.health,
+                        hunger: pc.hunger,
+                        thirst: pc.thirst,
+                        following: false,
+                        rescued: false
+                    };
+                }
                 if (child && world.tiles[y] && world.tiles[y][x]) {
                     world.tiles[y][x].child = child;
                 }
