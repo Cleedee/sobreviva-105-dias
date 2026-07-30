@@ -240,3 +240,142 @@ class CabinUI {
         game.ui.showMessage(`${child.name} saiu da cabana!`);
     }
 }
+
+// ChildBagUI - Gerenciamento da bolsa das crianças
+class ChildBagUI {
+    constructor() {
+        this.isOpen = false;
+        this.currentChild = null;
+        
+        const closeBtn = document.getElementById('close-child-bag-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => this.close());
+        }
+    }
+    
+    open(child) {
+        this.isOpen = true;
+        this.currentChild = child;
+        
+        document.getElementById('child-bag-name').textContent = child.name;
+        document.getElementById('child-bag-screen').classList.remove('hidden');
+        this.render();
+        
+        if (game && game.ui) {
+            game.ui.updateTouchControlsVisibility(false);
+        }
+    }
+    
+    close() {
+        this.isOpen = false;
+        this.currentChild = null;
+        document.getElementById('child-bag-screen').classList.add('hidden');
+        
+        if (game && game.ui) {
+            game.ui.updateTouchControlsVisibility(true);
+        }
+    }
+    
+    render() {
+        this.renderStorage();
+        this.renderPlayerInventory();
+    }
+    
+    renderStorage() {
+        const container = document.getElementById('child-bag-storage');
+        if (!container || !this.currentChild) return;
+        
+        container.innerHTML = '';
+        const storage = this.currentChild.storage || [];
+        
+        if (storage.length === 0) {
+            container.innerHTML = '<p class="cabin-empty">Vazio</p>';
+            return;
+        }
+        
+        storage.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'cabin-item';
+            div.innerHTML = `
+                <span class="cabin-item-name">${item.name} ${item.quantity > 1 ? 'x' + item.quantity : ''}</span>
+                <button class="cabin-item-btn withdraw" data-index="${index}">Retirar</button>
+            `;
+            container.appendChild(div);
+        });
+        
+        container.querySelectorAll('.withdraw').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                this.withdrawItem(idx);
+            });
+        });
+    }
+    
+    renderPlayerInventory() {
+        const container = document.getElementById('child-bag-inventory');
+        if (!container || !this.currentChild) return;
+        
+        container.innerHTML = '';
+        const inventory = game.player.inventory;
+        
+        inventory.slots.forEach((item, index) => {
+            if (!item) return;
+            
+            const div = document.createElement('div');
+            div.className = 'cabin-item';
+            div.innerHTML = `
+                <span class="cabin-item-name">${item.name} ${item.quantity > 1 ? 'x' + item.quantity : ''}</span>
+                <button class="cabin-item-btn deposit" data-index="${index}">Guardar</button>
+            `;
+            container.appendChild(div);
+        });
+        
+        container.querySelectorAll('.deposit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.dataset.index);
+                this.depositItem(idx);
+            });
+        });
+    }
+    
+    depositItem(inventorySlotIndex) {
+        const item = game.player.inventory.slots[inventorySlotIndex];
+        if (!item || !this.currentChild) return;
+        
+        const storage = this.currentChild.storage || [];
+        if (storage.length >= 5) {
+            game.ui.showMessage('Saco da criança está cheio!');
+            return;
+        }
+        
+        // Tentar empilhar
+        if (item.stackable) {
+            const existing = storage.find(s => s.id === item.id);
+            if (existing) {
+                existing.quantity += item.quantity;
+                game.player.inventory.removeItem(inventorySlotIndex);
+                this.render();
+                return;
+            }
+        }
+        
+        storage.push({ ...item });
+        game.player.inventory.removeItem(inventorySlotIndex);
+        this.render();
+    }
+    
+    withdrawItem(storageIndex) {
+        if (!this.currentChild) return;
+        
+        const storage = this.currentChild.storage || [];
+        const item = storage[storageIndex];
+        if (!item) return;
+        
+        if (game.player.inventory.addItem(item, item.quantity)) {
+            storage.splice(storageIndex, 1);
+            this.render();
+        } else {
+            game.ui.showMessage('Inventário cheio!');
+        }
+    }
+}

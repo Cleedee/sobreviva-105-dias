@@ -470,6 +470,20 @@ class Player {
     }
     
     interactWithFollowingChild(child, world) {
+        // Se criança tem bolsa, abrir interface da bolsa
+        if (child.hasBag) {
+            return { success: true, child: child, childBagOpen: true };
+        }
+        
+        // Verificar se tem uma Small Bag no inventário para dar à criança
+        const bagSlot = this.inventory.slots.findIndex(s => s && s.id === 'small_bag');
+        if (bagSlot !== -1) {
+            child.hasBag = true;
+            child.storage = [];
+            this.inventory.removeItem(bagSlot);
+            return { success: true, message: `🎒 Deu uma Bolsa Pequena para ${child.name}!` };
+        }
+        
         // Verificar se tem comida no inventário
         const foodSlots = this.inventory.slots
             .map((s, i) => ({ slot: s, index: i }))

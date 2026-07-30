@@ -206,6 +206,17 @@ const RECIPES = [
             { itemId: 'wood', quantity: 5, name: '🪵 Madeira' },
             { itemId: 'fiber', quantity: 2, name: '🌿 Fibra' }
         ]
+    },
+    {
+        id: 'water_bottle',
+        name: '🫗 Cantil',
+        description: 'Restaura 25 de sede. Dê para crianças ou beba você mesmo.',
+        result: { ...ITEMS.WATER_BOTTLE },
+        resultQuantity: 1,
+        ingredients: [
+            { itemId: 'fiber', quantity: 2, name: '🌿 Fibra' },
+            { itemId: 'wood', quantity: 1, name: '🪵 Madeira' }
+        ]
     }
 ];
 

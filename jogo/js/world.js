@@ -284,7 +284,9 @@ class World {
             hunger: 100,
             thirst: 100,
             following: false,
-            rescued: false
+            rescued: false,
+            hasBag: false,
+            storage: []
         };
     }
     

@@ -155,7 +155,13 @@ class SaveManager {
             x: c.x,
             y: c.y,
             happiness: c.happiness !== undefined ? c.happiness : 100,
-            starveTimer: c.starveTimer || 0
+            starveTimer: c.starveTimer || 0,
+            hasBag: c.hasBag || false,
+            storage: (c.storage || []).map(s => ({
+                id: s.id,
+                quantity: s.quantity,
+                durability: s.durability
+            }))
         }));
 
         // Serializar interativos
@@ -454,6 +460,20 @@ class SaveManager {
         
         // Restaurar crianças
         world.children = wData.children.map(cData => {
+            const restoreItem = (sd) => {
+                if (!sd) return null;
+                let itemDef;
+                if (sd.id.startsWith('key_')) {
+                    itemDef = ITEMS.KEY;
+                } else {
+                    itemDef = ITEMS[sd.id.toUpperCase()];
+                }
+                if (!itemDef) return null;
+                const item = { ...itemDef, quantity: sd.quantity };
+                item.id = sd.id;
+                if (sd.durability !== undefined) item.durability = sd.durability;
+                return item;
+            };
             const child = {
                 id: cData.id,
                 name: cData.name,
@@ -467,7 +487,9 @@ class SaveManager {
                 happiness: cData.happiness !== undefined ? cData.happiness : 100,
                 starveTimer: cData.starveTimer || 0,
                 messageTimer: 0,
-                currentMessage: null
+                currentMessage: null,
+                hasBag: cData.hasBag || false,
+                storage: (cData.storage || []).map(restoreItem).filter(Boolean)
             };
             return child;
         });

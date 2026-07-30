@@ -30,6 +30,7 @@ class Game {
         this.ui = new GameUI();
         this.crafting = new CraftingSystem();
         this.cabinUI = new CabinUI();
+        this.childBagUI = new ChildBagUI();
         
         // Tamanho da tela (agora camera já existe)
         this.resize();
@@ -170,7 +171,7 @@ class Game {
         }
         
         // Se inventário, pausa, crafting ou cabana aberto, não atualizar jogo
-        if (this.ui.inventoryOpen || this.ui.pauseOpen || this.crafting.isOpen || this.cabinUI.isOpen) return;
+        if (this.ui.inventoryOpen || this.ui.pauseOpen || this.crafting.isOpen || this.cabinUI.isOpen || this.childBagUI.isOpen) return;
         
         // Atualizar tempo
         this.timeManager.update(dt);
@@ -208,6 +209,9 @@ class Game {
                     
                     if (result.cabin) {
                         this.cabinUI.open(result.cabinX, result.cabinY);
+                    }
+                    if (result.childBagOpen && result.child) {
+                        this.childBagUI.open(result.child);
                     }
                 }
             }

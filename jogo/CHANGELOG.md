@@ -259,6 +259,22 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.12.0] - 2026-07-30
+
+### ✨ Novas Funcionalidades
+
+#### 🫗 Cantil Craftável
+- `crafting.js`: nova receita — 2 Fibra + 1 Madeira → 1 Cantil (`water_bottle`)
+- Agora é possível ter água para levar em viagens e abastecer cabanas
+
+#### 👶 Crianças com Bolsa
+- `player.js`: interaja com uma criança seguindo e, se tiver uma **Bolsa Pequena** no inventário, pode dar para ela
+- A criança passa a ter **5 slots** para carregar itens
+- Interaja novamente para abrir a **interface da bolsa** da criança (Guardar/Retirar itens)
+- `save.js`: estado da bolsa (`hasBag`, `storage`) é salvo/carregado
+
+---
+
 ## [1.11.3] - 2026-07-30
 
 ### 🐛 Correções
