@@ -4,7 +4,7 @@
  */
 
 const SAVE_KEY = 'sobreviva_105_save';
-const SAVE_VERSION = '1.11.0';
+const SAVE_VERSION = '1.12.0';
 const AUTO_SAVE_INTERVAL = 300000; // 5 minutos
 
 class SaveManager {
