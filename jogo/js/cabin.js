@@ -116,7 +116,9 @@ class CabinUI {
         if (!container) return;
         
         const childIds = game.world.getCabinChildren(this.currentCabinX, this.currentCabinY);
-        const following = game.player.children.filter(c => c.following && !childIds.includes(c.id));
+        const fromChildren = game.player.children.filter(c => c.following && !childIds.includes(c.id));
+        const fromFollowing = game.player.childrenFollowing.filter(c => !childIds.includes(c.id) && !fromChildren.find(fc => fc.id === c.id));
+        const following = [...fromChildren, ...fromFollowing];
         container.innerHTML = '';
         
         if (following.length === 0) {

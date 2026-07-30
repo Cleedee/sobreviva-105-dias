@@ -273,6 +273,8 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 - Interaja novamente para abrir a **interface da bolsa** da criança (Guardar/Retirar itens)
 - `world.js`: crianças seguindo com bolsa **consomem automaticamente** comida/água da própria bolsa quando fome < 50 ou sede < 50
 - `save.js`: estado da bolsa (`hasBag`, `storage`) é salvo/carregado
+- `save.js`: **Bugfix** — `restore()` agora repovoa `player.children` e `player.childrenFollowing` após `restoreWorld`
+- `cabin.js`: **Bugfix** — `renderChildrenFollowing()` também consulta `player.childrenFollowing` como fallback
 
 ---
 

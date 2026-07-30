@@ -277,6 +277,11 @@ class SaveManager {
         this.restorePlayer(game.player, data);
         this.restoreWorld(game.world, data.world);
         
+        // Repopular player.children e player.childrenFollowing
+        // (só existe children salvos em world.children, todos são resgatados)
+        game.player.children = [...game.world.children];
+        game.player.childrenFollowing = game.world.children.filter(c => c.following);
+        
         game.camera.x = data.camera.x;
         game.camera.y = data.camera.y;
     }
