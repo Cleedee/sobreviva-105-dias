@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sobreviva-105-v14';
+const CACHE_NAME = 'sobreviva-105-v15';
 const ASSETS = [
     './',
     './index.html',

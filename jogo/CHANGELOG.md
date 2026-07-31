@@ -259,6 +259,18 @@ Todas as alterações notáveis neste projeto estão documentadas neste arquivo.
 
 ---
 
+## [1.13.0] - 2026-07-31
+
+### 🐛 Correções
+
+#### 👶 Jogo travava ao interagir com criança com Bolsa Pequena
+- `css/style.css`: **causa raiz** — a tela `#child-bag-screen` não tinha `position`/`z-index`, então o canvas (`z-index: 1`) ficava por cima dela e engolia todos os cliques
+- O botão **Fechar** (e Guardar/Retirar) nunca era clicado, `childBagUI.isOpen` ficava `true` para sempre e o jogador congelava
+- **Correção**: `#child-bag-screen` agora usa o mesmo padrão das outras telas modais (`position: absolute; z-index: 50`), ficando acima do canvas
+- `sw.js`: cache v14 → v15 para forçar o download do novo CSS
+
+---
+
 ## [1.12.0] - 2026-07-30
 
 ### ✨ Novas Funcionalidades
