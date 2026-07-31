@@ -30,6 +30,11 @@ Lista de funcionalidades a implementar e melhorias.
 
 ### Crianças
 - [x] Sistema de fome/sede das crianças
+- [x] Crianças seguindo podem carregar itens com Bolsa Pequena (5 slots)
+- [x] Interface do saco da criança (Guardar/Retirar itens)
+- [x] Crianças com bolsa consomem comida/água da própria bolsa automaticamente
+- [x] Bugfix: UI da bolsa da criança coberta pelo canvas (z-index) — causava travamento
+- [x] Bugfix: crianças seguindo aparecem após Save/Load
 - [ ] Alimentar crianças (arrastar comida ou interagir)
 - [ ] Crianças morrem se não cuidar
 - [ ] Opção de devolver para a cela
@@ -166,4 +171,4 @@ Lista de funcionalidades a implementar e melhorias.
 
 ---
 
-*Última atualização: 2026-07-23*
+*Última atualização: 2026-07-31*
