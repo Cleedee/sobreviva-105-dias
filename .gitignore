@@ -29,3 +29,7 @@ build/
 # Temp files
 *.tmp
 *.temp
+
+# Playwright artifacts
+.playwright-mcp/
+game-start.png
