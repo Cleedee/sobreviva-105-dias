@@ -438,9 +438,26 @@ class Game {
         }
     }
     
-    togglePause() {
+    async togglePause() {
         this.paused = !this.paused;
         this.ui.togglePause();
+        
+        // Salvar pontuação ao pausar
+        if (this.paused) {
+            const nickname = localStorage.getItem('sobreviva_105_nickname') || 'Sobrevivente';
+            try {
+                const result = await rankingSystem.saveScore(
+                    nickname,
+                    this.timeManager.day,
+                    this.player.children.length
+                );
+                if (result && result.score) {
+                    console.log(`💾 Score salvo ao pausar: ${result.score}`);
+                }
+            } catch (e) {
+                console.warn('Erro ao salvar score:', e);
+            }
+        }
     }
     
     saveGame() {
