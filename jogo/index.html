@@ -18,6 +18,10 @@
         <div id="start-screen">
             <h1>🌲 Sobreviva 105 Dias</h1>
             <p>em uma Floresta</p>
+            <div class="nickname-container">
+                <label for="nickname-input">Seu Nickname:</label>
+                <input type="text" id="nickname-input" placeholder="Digite seu nome..." maxlength="20">
+            </div>
             <button id="start-btn">Iniciar Jogo</button>
             <button id="load-btn" class="hidden">Continuar Jogo</button>
             <div class="controls-info">
@@ -89,6 +93,11 @@
             <!-- Interaction Prompt -->
             <div id="interaction-prompt" class="hidden">
                 Pressione <strong>E</strong> para interagir
+            </div>
+
+            <!-- Player Nickname Display -->
+            <div id="player-nickname-display" class="hidden">
+                <span id="player-nickname"></span>
             </div>
 
             <!-- Help Button -->
