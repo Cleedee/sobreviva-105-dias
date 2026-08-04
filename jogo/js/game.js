@@ -108,6 +108,15 @@ class Game {
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('game-ui').classList.remove('hidden');
         
+        // Mostrar nickname do jogador
+        const nickname = localStorage.getItem('sobreviva_105_nickname') || 'Sobrevivente';
+        const nicknameDisplay = document.getElementById('player-nickname-display');
+        const nicknameText = document.getElementById('player-nickname');
+        if (nicknameDisplay && nicknameText) {
+            nicknameText.textContent = nickname;
+            nicknameDisplay.classList.remove('hidden');
+        }
+        
         // Garantir que canvas está visível
         this.canvas.style.display = 'block';
         this.canvas.style.zIndex = '1';

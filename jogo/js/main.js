@@ -2,6 +2,18 @@
  * Main - Ponto de entrada do jogo
  */
 
+// Constante para chave do nickname no localStorage
+const NICKNAME_KEY = 'sobreviva_105_nickname';
+
+// Função para obter/salvar nickname
+function getNickname() {
+    return localStorage.getItem(NICKNAME_KEY) || '';
+}
+
+function saveNickname(nickname) {
+    localStorage.setItem(NICKNAME_KEY, nickname);
+}
+
 // Esperar DOM carregar
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🌲 Sobreviva 105 Dias em uma Floresta');
@@ -30,6 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Botão de iniciar
     const startBtn = document.getElementById('start-btn');
     const loadBtn = document.getElementById('load-btn');
+    const nicknameInput = document.getElementById('nickname-input');
+    
+    // Carregar nickname salvo
+    const savedNickname = getNickname();
+    if (savedNickname) {
+        nicknameInput.value = savedNickname;
+    }
     
     // Mostrar botão de carregar se houver save
     if (saveManager.hasSave()) {
@@ -40,6 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     startBtn.addEventListener('click', () => {
         try {
+            // Salvar nickname
+            const nickname = nicknameInput.value.trim() || 'Sobrevivente';
+            saveNickname(nickname);
+            
             game.start();
             if (touchControls && touchControls.isActive()) {
                 touchControls.updateVisibility(true);
@@ -52,6 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Botão de carregar jogo salvo
     loadBtn.addEventListener('click', () => {
         try {
+            // Salvar nickname
+            const nickname = nicknameInput.value.trim() || 'Sobrevivente';
+            saveNickname(nickname);
+            
             game.start();
             if (game.loadGame()) {
                 if (touchControls && touchControls.isActive()) {
@@ -60,6 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (e) {
             console.error('Erro ao carregar jogo:', e);
+        }
+    });
+    
+    // Permitir iniciar com Enter
+    nicknameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            startBtn.click();
         }
     });
     
