@@ -113,13 +113,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (closeRankingBtn) {
         closeRankingBtn.addEventListener('click', () => {
-            rankingScreen.classList.add('hidden');
+            closeRanking();
         });
     }
     
     if (closeRankingX) {
         closeRankingX.addEventListener('click', () => {
-            rankingScreen.classList.add('hidden');
+            closeRanking();
         });
     }
     
@@ -147,6 +147,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Botão de salvar no pause menu
     document.getElementById('save-btn').addEventListener('click', () => {
         game.saveGame();
+    });
+    
+    // Botão de ranking no pause menu
+    document.getElementById('pause-ranking-btn').addEventListener('click', () => {
+        showRanking();
     });
     
     // Botão de sair no pause menu
@@ -239,6 +244,16 @@ async function showRanking() {
     const rankingScreen = document.getElementById('ranking-screen');
     const rankingList = document.getElementById('ranking-list');
     const rankingStatus = document.getElementById('ranking-status');
+    const pauseMenu = document.getElementById('pause-menu');
+    
+    // Fechar pause menu se estiver aberto
+    if (pauseMenu && !pauseMenu.classList.contains('hidden')) {
+        pauseMenu.classList.add('hidden');
+        // Marcar que veio do pause
+        rankingScreen.dataset.fromPause = 'true';
+    } else {
+        rankingScreen.dataset.fromPause = 'false';
+    }
     
     rankingList.innerHTML = '<div class="ranking-loading">Carregando</div>';
     rankingScreen.classList.remove('hidden');
@@ -336,6 +351,21 @@ async function loadMyScores() {
     } catch (error) {
         console.error('Erro ao carregar meus scores:', error);
         myList.innerHTML = '<div class="ranking-empty">Erro ao carregar seus scores.</div>';
+    }
+}
+
+/**
+ * Fechar ranking e voltar ao pause se necessário
+ */
+function closeRanking() {
+    const rankingScreen = document.getElementById('ranking-screen');
+    const pauseMenu = document.getElementById('pause-menu');
+    
+    rankingScreen.classList.add('hidden');
+    
+    // Voltar ao pause menu se veio de lá
+    if (rankingScreen.dataset.fromPause === 'true' && game && game.paused) {
+        pauseMenu.classList.remove('hidden');
     }
 }
 
