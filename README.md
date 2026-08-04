@@ -8,10 +8,41 @@ Explore um mundo vasto, colete recursos, crafte itens e enfrente perigos enquant
 
 ## 🚀 Como Jogar
 
+### Método Recomendado: Servidor Local
+
+Para evitar problemas de CORS, é recomendado usar um servidor local:
+
+**Opção 1 - Python:**
+```bash
+cd jogo
+python -m http.server 8000
+```
+Acesse: `http://localhost:8000`
+
+**Opção 2 - Node.js (npx):**
+```bash
+npx serve jogo
+```
+
+**Opção 3 - VS Code Live Server:**
+1. Instale a extensão [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+2. Abra a pasta `jogo/` no VS Code
+3. Clique com botão direito em `index.html` → **Open with Live Server**
+
+**Opção 4 - PHP:**
+```bash
+cd jogo
+php -S localhost:8000
+```
+
+### Método Direto (pode ter limitações)
+
 1. Navegue até a pasta `jogo/`
 2. Abra `index.html` em qualquer navegador moderno
-3. Clique em "Iniciar Jogo"
+3. Digite seu nickname e clique em "Iniciar Jogo"
 4. Sobreviva e resgate as crianças!
+
+> ⚠️ **Nota:** Abrir o arquivo diretamente (`file://`) pode causar erros CORS ao carregar o manifest.json. Use um servidor local para melhor experiência.
 
 ## 📱 Controles
 
