@@ -459,11 +459,28 @@ class Game {
         return false;
     }
     
-    gameOver(reason) {
+    async gameOver(reason) {
         this.running = false;
         audioManager.playGameOver();
         audioManager.stopMusic();
         audioManager.stopAmbientLoop();
+        
+        // Salvar pontuação
+        const nickname = localStorage.getItem('sobreviva_105_nickname') || 'Sobrevivente';
+        let scoreResult = null;
+        
+        try {
+            scoreResult = await rankingSystem.saveScore(
+                nickname,
+                this.timeManager.day,
+                this.player.children.length
+            );
+        } catch (e) {
+            console.warn('Erro ao salvar pontuação:', e);
+        }
+        
+        // Calcular pontuação para exibir
+        const score = scoreResult ? scoreResult.score : rankingSystem.calculateScore(this.timeManager.day, this.player.children.length);
         
         // Mostrar tela de game over
         const overlay = document.createElement('div');
@@ -483,22 +500,37 @@ class Game {
         
         overlay.innerHTML = `
             <h1 style="font-size: 4rem; margin-bottom: 1rem;">💀 Game Over</h1>
-            <p style="font-size: 1.5rem; margin-bottom: 2rem;">${reason}</p>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem;">
+            <p style="font-size: 1.5rem; margin-bottom: 1rem;">${reason}</p>
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">
                 Você sobreviveu por ${this.timeManager.day} dias
             </p>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem;">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">
                 Crianças resgatadas: ${this.player.children.length} / ${GAME_CONFIG.TOTAL_CHILDREN}
             </p>
-            <button onclick="location.reload()" style="
-                padding: 1rem 3rem;
-                font-size: 1.5rem;
-                background: #22c55e;
-                color: white;
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-            ">Tentar Novamente</button>
+            <p style="font-size: 1.8rem; margin-bottom: 2rem; color: #fbbf24; font-weight: bold;">
+                🏆 Pontuação: ${score.toLocaleString()}
+            </p>
+            <div style="display: flex; gap: 20px;">
+                <button onclick="showRanking()" style="
+                    padding: 1rem 2rem;
+                    font-size: 1.2rem;
+                    background: #f59e0b;
+                    color: #1f2937;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-weight: bold;
+                ">🏆 Ranking</button>
+                <button onclick="location.reload()" style="
+                    padding: 1rem 2rem;
+                    font-size: 1.2rem;
+                    background: #22c55e;
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                ">Tentar Novamente</button>
+            </div>
         `;
         
         document.body.appendChild(overlay);
@@ -506,11 +538,28 @@ class Game {
         if (this.onGameOver) this.onGameOver();
     }
     
-    win() {
+    async win() {
         this.running = false;
         audioManager.playVictory();
         audioManager.stopMusic();
         audioManager.stopAmbientLoop();
+        
+        // Salvar pontuação
+        const nickname = localStorage.getItem('sobreviva_105_nickname') || 'Sobrevivente';
+        let scoreResult = null;
+        
+        try {
+            scoreResult = await rankingSystem.saveScore(
+                nickname,
+                this.timeManager.day,
+                this.player.children.length
+            );
+        } catch (e) {
+            console.warn('Erro ao salvar pontuação:', e);
+        }
+        
+        // Calcular pontuação para exibir
+        const score = scoreResult ? scoreResult.score : rankingSystem.calculateScore(this.timeManager.day, this.player.children.length);
         
         const overlay = document.createElement('div');
         overlay.style.cssText = `
@@ -529,21 +578,36 @@ class Game {
         
         overlay.innerHTML = `
             <h1 style="font-size: 4rem; margin-bottom: 1rem;">🏆 Vitória!</h1>
-            <p style="font-size: 1.5rem; margin-bottom: 2rem;">
+            <p style="font-size: 1.5rem; margin-bottom: 1rem;">
                 Você resgatou todas as ${GAME_CONFIG.TOTAL_CHILDREN} crianças!
             </p>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem;">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">
                 Todos estão seguros no dia 105!
             </p>
-            <button onclick="location.reload()" style="
-                padding: 1rem 3rem;
-                font-size: 1.5rem;
-                background: #22c55e;
-                color: white;
-                border: none;
-                border-radius: 10px;
-                cursor: pointer;
-            ">Jogar Novamente</button>
+            <p style="font-size: 2rem; margin-bottom: 2rem; color: #fbbf24; font-weight: bold;">
+                🏆 Pontuação: ${score.toLocaleString()}
+            </p>
+            <div style="display: flex; gap: 20px;">
+                <button onclick="showRanking()" style="
+                    padding: 1rem 2rem;
+                    font-size: 1.2rem;
+                    background: #f59e0b;
+                    color: #1f2937;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-weight: bold;
+                ">🏆 Ranking</button>
+                <button onclick="location.reload()" style="
+                    padding: 1rem 2rem;
+                    font-size: 1.2rem;
+                    background: #22c55e;
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                ">Jogar Novamente</button>
+            </div>
         `;
         
         document.body.appendChild(overlay);

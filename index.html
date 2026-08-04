@@ -24,6 +24,7 @@
             </div>
             <button id="start-btn">Iniciar Jogo</button>
             <button id="load-btn" class="hidden">Continuar Jogo</button>
+            <button id="ranking-btn" class="ranking-menu-btn">🏆 Ranking</button>
             <div class="controls-info">
                 <p><strong>Controles:</strong></p>
                 <p>WASD ou Setas - Mover</p>
@@ -203,6 +204,50 @@
             </div>
         </div>
 
+        <!-- Ranking Screen -->
+        <div id="ranking-screen" class="hidden">
+            <div class="ranking-panel">
+                <button class="ranking-close-x" id="close-ranking-x">✕</button>
+                <h2>🏆 Ranking Global</h2>
+                
+                <!-- Abas -->
+                <div class="ranking-tabs">
+                    <button class="ranking-tab active" data-tab="global">🌍 Global</button>
+                    <button class="ranking-tab" data-tab="my-scores">📊 Meus Scores</button>
+                </div>
+                
+                <!-- Ranking Global -->
+                <div id="ranking-global" class="ranking-content active">
+                    <div id="ranking-list"></div>
+                </div>
+                
+                <!-- Meus Scores -->
+                <div id="ranking-my-scores" class="ranking-content">
+                    <div id="my-scores-list"></div>
+                </div>
+                
+                <!-- Estatísticas -->
+                <div class="ranking-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="stat-total-games">0</span>
+                        <span class="stat-label">Partidas</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="stat-avg-days">0</span>
+                        <span class="stat-label">Média Dias</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="stat-total-children">0</span>
+                        <span class="stat-label">Crianças Salvas</span>
+                    </div>
+                </div>
+                
+                <div class="ranking-status" id="ranking-status"></div>
+                
+                <button id="close-ranking-btn">Fechar</button>
+            </div>
+        </div>
+
         <!-- Cabin Screen -->
         <div id="cabin-screen" class="hidden">
             <div class="cabin-panel">
@@ -241,6 +286,8 @@
     <script src="jogo/js/crafting.js"></script>
     <script src="jogo/js/cabin.js"></script>
     <script src="jogo/js/save.js"></script>
+    <script src="jogo/js/supabase.js"></script>
+    <script src="jogo/js/ranking.js"></script>
     <script src="jogo/js/game.js"></script>
     <script src="jogo/js/main.js"></script>
     <script>

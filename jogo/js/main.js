@@ -97,6 +97,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // ==================== RANKING ====================
+    
+    // Botão de ranking na tela inicial
+    const rankingBtn = document.getElementById('ranking-btn');
+    const rankingScreen = document.getElementById('ranking-screen');
+    const closeRankingBtn = document.getElementById('close-ranking-btn');
+    const closeRankingX = document.getElementById('close-ranking-x');
+    
+    if (rankingBtn) {
+        rankingBtn.addEventListener('click', () => {
+            showRanking();
+        });
+    }
+    
+    if (closeRankingBtn) {
+        closeRankingBtn.addEventListener('click', () => {
+            rankingScreen.classList.add('hidden');
+        });
+    }
+    
+    if (closeRankingX) {
+        closeRankingX.addEventListener('click', () => {
+            rankingScreen.classList.add('hidden');
+        });
+    }
+    
+    // Abas do ranking
+    document.querySelectorAll('.ranking-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remover active de todas
+            document.querySelectorAll('.ranking-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.ranking-content').forEach(c => c.classList.remove('active'));
+            
+            // Adicionar active na clicada
+            tab.classList.add('active');
+            const tabName = tab.dataset.tab;
+            document.getElementById(`ranking-${tabName}`).classList.add('active');
+            
+            // Carregar conteúdo
+            if (tabName === 'my-scores') {
+                loadMyScores();
+            }
+        });
+    });
+    
+    // ==================== FIM RANKING ====================
+    
     // Botão de salvar no pause menu
     document.getElementById('save-btn').addEventListener('click', () => {
         game.saveGame();
@@ -182,6 +229,126 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ==================== FUNÇÕES DE RANKING ====================
+
+/**
+ * Mostrar tela de ranking
+ */
+async function showRanking() {
+    const rankingScreen = document.getElementById('ranking-screen');
+    const rankingList = document.getElementById('ranking-list');
+    const rankingStatus = document.getElementById('ranking-status');
+    
+    rankingList.innerHTML = '<div class="ranking-loading">Carregando</div>';
+    rankingScreen.classList.remove('hidden');
+    
+    // Mostrar status de conexão
+    if (rankingSystem.isOnline) {
+        rankingStatus.textContent = '🟢 Online - Ranking global ativo';
+        rankingStatus.className = 'ranking-status online';
+    } else {
+        rankingStatus.textContent = '🔴 Offline - Ranking salvo localmente';
+        rankingStatus.className = 'ranking-status offline';
+    }
+    
+    try {
+        // Buscar ranking
+        const ranking = await rankingSystem.getRanking(10);
+        displayRanking(ranking);
+        
+        // Buscar estatísticas
+        const stats = await rankingSystem.getStats();
+        if (stats) {
+            document.getElementById('stat-total-games').textContent = stats.totalGames;
+            document.getElementById('stat-avg-days').textContent = stats.avgDays || 0;
+            document.getElementById('stat-total-children').textContent = stats.totalChildren;
+        }
+    } catch (error) {
+        console.error('Erro ao carregar ranking:', error);
+        rankingList.innerHTML = '<div class="ranking-empty">Erro ao carregar ranking</div>';
+    }
+}
+
+/**
+ * Exibir ranking na tela
+ */
+function displayRanking(ranking) {
+    const rankingList = document.getElementById('ranking-list');
+    
+    if (!ranking || ranking.length === 0) {
+        rankingList.innerHTML = '<div class="ranking-empty">Nenhuma pontuação registrada ainda. Seja o primeiro!</div>';
+        return;
+    }
+    
+    rankingList.innerHTML = ranking.map((player, index) => {
+        let medalClass = '';
+        let medalEmoji = `${player.position}º`;
+        
+        if (player.position === 1) { medalClass = 'gold'; medalEmoji = '🥇'; }
+        else if (player.position === 2) { medalClass = 'silver'; medalEmoji = '🥈'; }
+        else if (player.position === 3) { medalClass = 'bronze'; medalEmoji = '🥉'; }
+        
+        return `
+            <div class="ranking-item ${medalClass}">
+                <span class="ranking-position">${medalEmoji}</span>
+                <div class="ranking-info">
+                    <div class="ranking-nickname">${escapeHtml(player.nickname)}</div>
+                    <div class="ranking-details">
+                        📅 ${player.days_survived} dias | 👧 ${player.children_rescued}/6 crianças
+                    </div>
+                </div>
+                <span class="ranking-score">${player.score.toLocaleString()}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Carregar meus scores
+ */
+async function loadMyScores() {
+    const myList = document.getElementById('my-scores-list');
+    const nickname = localStorage.getItem('sobreviva_105_nickname') || 'Sobrevivente';
+    
+    myList.innerHTML = '<div class="ranking-loading">Carregando</div>';
+    
+    try {
+        const scores = await rankingSystem.getPlayerScores(nickname);
+        
+        if (!scores || scores.length === 0) {
+            myList.innerHTML = '<div class="ranking-empty">Você ainda não tem pontuações. Jogue para registrar!</div>';
+            return;
+        }
+        
+        myList.innerHTML = scores.map((score, index) => `
+            <div class="ranking-item">
+                <span class="ranking-position">#${index + 1}</span>
+                <div class="ranking-info">
+                    <div class="ranking-nickname">${escapeHtml(score.nickname)}</div>
+                    <div class="ranking-details">
+                        📅 ${score.days_survived} dias | 👧 ${score.children_rescued}/6 crianças
+                    </div>
+                </div>
+                <span class="ranking-score">${score.score.toLocaleString()}</span>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Erro ao carregar meus scores:', error);
+        myList.innerHTML = '<div class="ranking-empty">Erro ao carregar seus scores.</div>';
+    }
+}
+
+/**
+ * Função auxiliar para escapar HTML
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ==================== FIM RANKING ====================
 
 function showUpdateToast(version) {
     // Evitar múltiplos toasts
