@@ -11,8 +11,8 @@
 // ⚠️ SUBSTITUA PELOS SEUS VALORES DO SUPABASE
 // ============================================
 const SUPABASE_CONFIG = {
-    url: 'https://SEU-PROJETO.supabase.co',           // Seu Project URL
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.SUA_CHAVE_AQUI'  // Sua anon key
+    url: 'https://lhxjbnmmqufotewsdzmx.supabase.co',           // Seu Project URL
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxoeGpibm1tcXVmb3Rld3Nkem14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NDM0MjYsImV4cCI6MjEwMTQxOTQyNn0.0N1Fzin-91e4ka1M-lzsOLaXdjFMufWP5qDuzJtO5Bs'  // Sua anon key
 };
 
 /**
